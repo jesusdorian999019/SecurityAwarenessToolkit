@@ -40,7 +40,7 @@ apt-get -y install php wget unzip
 
 ```
 git clone https://github.com/jesusdorian999019/CamPhish-master-v-YISUS.git
-cd CamPhish
+cd CamPhish-master-v-YISUS
 bash camphish.sh
 ```
 

