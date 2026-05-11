@@ -260,23 +260,29 @@ fi
 fi
 
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
-php -S 127.0.0.1:3333 > /dev/null 2>&1 & 
+php -S 127.0.0.1:3333 > php_server.log 2>&1 & 
 sleep 2
-printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel...\n"
-rm -rf .cloudflared_output.log > /dev/null 2>&1 &
+printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel in a new terminal...\n"
+rm -rf .cloudflared_output.log > /dev/null 2>&1
 
-if [[ "$windows_mode" == true ]]; then
-    ./cloudflared.exe tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
+# Check if tmux is available, if not use xterm, if not use gnome-terminal
+if command -v tmux &> /dev/null; then
+    tmux new-session -d -s cloudflared_tunnel -x 200 -y 50 "./cloudflared tunnel --url http://localhost:3333 | tee .cloudflared_output.log"
+elif command -v xterm &> /dev/null; then
+    xterm -hold -e "./cloudflared tunnel --url http://localhost:3333 | tee .cloudflared_output.log" &
+elif command -v gnome-terminal &> /dev/null; then
+    gnome-terminal -- bash -c "./cloudflared tunnel --url http://localhost:3333 | tee .cloudflared_output.log; sleep 5" &
 else
-    ./cloudflared tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
+    # Fallback: run in background and capture output
+    if [[ "$windows_mode" == true ]]; then
+        ./cloudflared.exe tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
+    else
+        ./cloudflared tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
+    fi
 fi
 
-sleep 20
-if [[ ! -f .cloudflared_output.log ]]; then
-    printf "\e[1;31m[!] Cloudflared failed to start or executable not found\e[0m\n"
-    exit 1
-fi
-link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log")
+sleep 25
+link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log" 2>/dev/null)
 if [[ -z "$link" ]]; then
 printf "\e[1;31m[!] Direct link is not generating, check following possible reason  \e[0m\n"
 printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m CloudFlare tunnel service might be down\n"

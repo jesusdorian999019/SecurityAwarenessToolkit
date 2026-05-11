@@ -9,6 +9,7 @@ echo "Removing log files..."
 rm -f *.log
 rm -f .cloudflared.log
 rm -f .cloudflared_output.log
+rm -f php_server.log
 
 # Remove temporary location files
 echo "Removing temporary location files..."
