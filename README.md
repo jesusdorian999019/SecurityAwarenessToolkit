@@ -1,25 +1,25 @@
 # CamPhish
-Grab cam shots from target's phone front camera or PC webcam just sending a link.
+Captura fotos de la cámara frontal del teléfono o webcam de la PC de la víctima enviando solo un enlace.
 ![CamPhish](https://techchip.net/wp-content/uploads/2020/04/camphish.jpg)
 
 **Nota importante:** Este proyecto ha sido modificado para mejorar la compatibilidad y funcionamiento con Cloudflare Tunnel. El proyecto original pertenece a techchipnet y se puede encontrar en [https://github.com/techchipnet/CamPhish](https://github.com/techchipnet/CamPhish). No somos los autores originales.
 
-# What is CamPhish?
-<p>CamPhish is techniques to take cam shots of target's phone front camera or PC webcam. CamPhish Hosts a fake website on in built PHP server and uses ngrok & CloudFlare Tunnel to generate a link which we will forward to the target, which can be used on over internet. website asks for camera permission and if the target allows it, this tool grab camshots of target's device
+# ¿Qué es CamPhish?
+<p>CamPhish es una técnica para tomar fotos de la cámara frontal del teléfono o la webcam de la PC de la víctima. CamPhish aloja un sitio web falso en un servidor PHP integrado y usa Ngrok y CloudFlare Tunnel para generar un enlace que enviaremos a la víctima, el cual se puede usar en internet. El sitio web solicita permiso para la cámara y si la víctima lo permite, esta herramienta captura fotos de la cámara del dispositivo de la víctima.
 
-A GPS location capture feature has been added.</p>
+Se ha agregado una función de captura de ubicación GPS.</p>
 
-## Features
-<p>In this tool I added two automatic webpage templates for engaged target on webpage to get more picture of cam</p>
+## Características
+<p>En esta herramienta agregué dos plantillas automáticas de páginas web para mantener a la víctima comprometida en la página y obtener más fotos de la cámara</p>
 <ul>
-  <li>Festival Wishing</li>
-  <li>Live YouTube TV</li>
-  <li>Online Meeting [Beta]</li>
-  <li>GPS Location Tracking</li>
+  <li>Deseos de Festival</li>
+  <li>TV en Vivo de YouTube</li>
+  <li>Reunión en Línea [Beta]</li>
+  <li>Rastreo de Ubicación GPS</li>
 </ul>
-<p>A cleanup script has been added to remove all unnecessary files and logs.</p>
+<p>Se ha agregado un script de limpieza para eliminar todos los archivos y logs innecesarios.</p>
 
-## This Tool Tested On :
+## Esta Herramienta se Probó En:
 <ul>
   <li>Kali Linux</li>
   <li>Termux</li>
@@ -29,68 +29,68 @@ A GPS location capture feature has been added.</p>
   <li>Windows (WSL)</li>
 </ul>
 
-# Installing and requirements
-<p>This tool require PHP for webserver, and wget for downloading dependencies. First run following command on your terminal</p>
+# Instalación y Requisitos
+<p>Esta herramienta requiere PHP para el servidor web y wget para descargar dependencias. Primero ejecuta el siguiente comando en tu terminal</p>
 
 ```
 apt-get -y install php wget unzip
 ```
 
-## Installing (Kali Linux/Termux):
+## Instalación (Kali Linux/Termux):
 
 ```
-git clone https://github.com/techchipnet/CamPhish
+git clone https://github.com/jesusdorian999019/CamPhish-master-v-YISUS.git
 cd CamPhish
 bash camphish.sh
 ```
 
-## Clean logs & unnecessary files :
+## Limpiar logs y archivos innecesarios:
 
 ```
 bash cleanup.sh
 ```
-<p>The cam files and saved location will also be removed.</p>
+<p>Los archivos de cámara y las ubicaciones guardadas también serán eliminados.</p>
 
-## Change Log:
+## Registro de Cambios:
 
-<p><b>Version: 2.0:</b> Added GPS Location Tracking</p>
+<p><b>Versión: 2.0:</b> Agregado Rastreo de Ubicación GPS</p>
 <ul>
-  <li>Added: GPS location capturing functionality</li>
-  <li>Added: Google Maps integration for captured locations</li>
-  <li>Added: Location accuracy reporting</li>
-  <li>Added: Improved loading screen with location request</li>
+  <li>Agregado: Funcionalidad de captura de ubicación GPS</li>
+  <li>Agregado: Integración con Google Maps para ubicaciones capturadas</li>
+  <li>Agregado: Reporte de precisión de ubicación</li>
+  <li>Agregado: Pantalla de carga mejorada con solicitud de ubicación</li>
 </ul>
 
-<p><b>Version: 1.9:</b> Enhanced architecture detection</p>
+<p><b>Versión: 1.9:</b> Detección de arquitectura mejorada</p>
 <ul>
-  <li>Added: Improved architecture detection for all CPU types</li>
-  <li>Added: Better support for Apple Silicon (M1/M2/M3) Macs</li>
-  <li>Added: Automatic detection of ARM, ARM64, x86, and x86_64 architectures</li>
-  <li>Fixed: Windows compatibility improvements</li>
-  <li>Fixed: CloudFlare Tunnel download issues</li>
+  <li>Agregado: Detección de arquitectura mejorada para todos los tipos de CPU</li>
+  <li>Agregado: Mejor soporte para Macs con Apple Silicon (M1/M2/M3)</li>
+  <li>Agregado: Detección automática de arquitecturas ARM, ARM64, x86 y x86_64</li>
+  <li>Corregido: Mejoras de compatibilidad con Windows</li>
+  <li>Corregido: Problemas de descarga de CloudFlare Tunnel</li>
 </ul>
 
-<p><b>Version: 1.8:</b> Added CloudFlare Tunnel and removed Serveo</p>
+<p><b>Versión: 1.8:</b> Agregado CloudFlare Tunnel y removido Serveo</p>
 <ul>
-  <li>Added: CloudFlare Tunnel support for more reliable connections</li>
-  <li>Removed: Serveo tunnel (deprecated)</li>
-  <li>Fixed: Various code improvements and bug fixes</li>
+  <li>Agregado: Soporte para CloudFlare Tunnel para conexiones más confiables</li>
+  <li>Removido: Túnel Serveo (obsoleto)</li>
+  <li>Corregido: Varias mejoras de código y corrección de errores</li>
 </ul>
 
-<p><b>Version: 1.7:</b> Fix and add support</p>
+<p><b>Versión: 1.7:</b> Corrección y agregar soporte</p>
 <ul>
-  <li>fixed: termux failed to get home directory</li>
-  <li>Add support for Apple sillicon (M1/M2/M3 ARM64)</li>
-  <li>Add support for arm64 like Raspberry Pi</li>
+  <li>corregido: termux fallaba al obtener directorio home</li>
+  <li>Agregar soporte para Apple Silicon (M1/M2/M3 ARM64)</li>
+  <li>Agregar soporte para arm64 como Raspberry Pi</li>
 </ul>
-<p><b>Version: 1.6:</b> Fix ngrok direct link generate</p>
-<p><b>Version: 1.5:</b> Add new online meeting template</p>
-<p><b>Version: 1.4:</b> Ngrok authtoken update</p>
-<p><b>Version: 1.3:</b> Fix ngrok direct link</p>
+<p><b>Versión: 1.6:</b> Corregir generación de enlace directo de ngrok</p>
+<p><b>Versión: 1.5:</b> Agregar nueva plantilla de reunión en línea</p>
+<p><b>Versión: 1.4:</b> Actualización de authtoken de ngrok</p>
+<p><b>Versión: 1.3:</b> Corregir enlace directo de ngrok</p>
 
-### Important Notice
-Unauthorized reuploading of this project is prohibited.
+### Aviso Importante
+La reubicación no autorizada de este proyecto está prohibida.
 
-#### For More Video subcribe <a href="http://youtube.com/techchipnet">TechChip YouTube Channel</a>
-<p>CamPhish is created to help in penetration testing and it's not responsible for any misuse or illegal purposes.</p>
-<p>CamPhish is inspired by https://github.com/thelinuxchoice/ Big thanks to @thelinuxchoice</p>
+#### Para Más Videos suscríbete al <a href="http://youtube.com/techchipnet">Canal de YouTube TechChip</a>
+<p>CamPhish se crea para ayudar en pruebas de penetración y no es responsable de ningún mal uso o propósitos ilegales.</p>
+<p>CamPhish está inspirado en https://github.com/thelinuxchoice/ Grandes gracias a @thelinuxchoice</p>
