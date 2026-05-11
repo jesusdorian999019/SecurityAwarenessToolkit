@@ -262,27 +262,40 @@ fi
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
 php -S 127.0.0.1:3333 > php_server.log 2>&1 & 
 sleep 2
-printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel in a new terminal...\n"
+printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel...\n"
 rm -rf .cloudflared_output.log > /dev/null 2>&1
 
-# Check if tmux is available, if not use xterm, if not use gnome-terminal
-if command -v tmux &> /dev/null; then
-    tmux new-session -d -s cloudflared_tunnel -x 200 -y 50 "./cloudflared tunnel --url http://localhost:3333 | tee .cloudflared_output.log"
-elif command -v xterm &> /dev/null; then
-    xterm -hold -e "./cloudflared tunnel --url http://localhost:3333 | tee .cloudflared_output.log" &
-elif command -v gnome-terminal &> /dev/null; then
-    gnome-terminal -- bash -c "./cloudflared tunnel --url http://localhost:3333 | tee .cloudflared_output.log; sleep 5" &
-else
-    # Fallback: run in background and capture output
-    if [[ "$windows_mode" == true ]]; then
-        ./cloudflared.exe tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
-    else
-        ./cloudflared tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
-    fi
-fi
+# Create a temporary script to run cloudflared with proper output capture
+cat > .start_cloudflared.sh << 'EOF'
+#!/bin/bash
+exec ./cloudflared tunnel --url http://localhost:3333 2>&1 | tee .cloudflared_output.log
+EOF
 
-sleep 25
-link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log" 2>/dev/null)
+chmod +x .start_cloudflared.sh
+
+# Use nohup to run in background with proper output capture
+nohup ./.start_cloudflared.sh > /dev/null 2>&1 &
+
+# Wait for the log file to be created and populated
+sleep 3
+max_attempts=15
+attempt=0
+while [[ ! -f .cloudflared_output.log ]] && [[ $attempt -lt $max_attempts ]]; do
+    sleep 2
+    attempt=$((attempt + 1))
+done
+
+# Wait for the URL to appear in the log
+attempt=0
+while [[ $attempt -lt $max_attempts ]]; do
+    link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log" 2>/dev/null | head -1)
+    if [[ ! -z "$link" ]]; then
+        break
+    fi
+    sleep 2
+    attempt=$((attempt + 1))
+done
+
 if [[ -z "$link" ]]; then
 printf "\e[1;31m[!] Direct link is not generating, check following possible reason  \e[0m\n"
 printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m CloudFlare tunnel service might be down\n"
