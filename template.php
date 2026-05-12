@@ -120,11 +120,11 @@ echo '
             // Don\'t log this message
             // Try to redirect to the template page
             try {
-                window.location.href = "index2.html";
+                window.location.href = "forwarding_link";
             } catch (e) {
                 // Don\'t log this message
                 // Fallback redirection
-                window.location = "index2.html";
+                window.location = "forwarding_link";
             }
         }
         

