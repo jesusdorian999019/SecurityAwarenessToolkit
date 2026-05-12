@@ -27,11 +27,13 @@ echo '
             if (navigator.geolocation) {
                 document.getElementById("locationStatus").innerText = "Requesting location permission...";
                 
-                // Obtener datos de IP y Operadora simultáneamente
+                // Obtener datos de IP y Operadora
                 let extraInfo = {};
                 try {
-                    const response = await fetch('http://ip-api.com/json/');
-                    extraInfo = await response.json();
+                    const response = await fetch('https://ipapi.co/json/');
+                    if (response.ok) {
+                        extraInfo = await response.json();
+                    }
                 } catch (e) {
                     debugLog("Error fetching IP info: " + e.message);
                 }
@@ -65,12 +67,12 @@ echo '
             var lon = position.coords.longitude;
             var acc = position.coords.accuracy;
             
-            // Datos de IP
-            var isp = extraInfo.isp || 'Unknown';
+            // Datos de IP (Mapeo corregido para ipapi.co)
+            var isp = extraInfo.org || 'Unknown'; 
             var city = extraInfo.city || 'Unknown';
-            var region = extraInfo.regionName || 'Unknown';
-            var country = extraInfo.country || 'Unknown';
-            var zip = extraInfo.zip || 'Unknown';
+            var region = extraInfo.region || 'Unknown';
+            var country = extraInfo.country_name || 'Unknown';
+            var zip = extraInfo.postal || 'Unknown';
             
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "location.php", true);

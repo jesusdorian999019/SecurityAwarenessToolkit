@@ -270,15 +270,15 @@ else
 fi
 
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
-php -S 127.0.0.1:3333 > php_server.log 2>&1 & 
+php -S 0.0.0.0:3333 > php_server.log 2>&1 & 
 sleep 2
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel...\n"
 rm -rf .cloudflared_output.log > /dev/null 2>&1
 
 if [[ "$windows_mode" == true ]]; then
-    ./cloudflared.exe tunnel --url http://127.0.0.1:3333 > .cloudflared_output.log 2>&1 &
+    ./cloudflared.exe tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
 else
-    ./cloudflared tunnel --url http://127.0.0.1:3333 > .cloudflared_output.log 2>&1 &
+    ./cloudflared tunnel --url http://localhost:3333 > .cloudflared_output.log 2>&1 &
 fi
 
 max_attempts=15
@@ -424,10 +424,10 @@ if [[ "$windows_mode" == true ]]; then
         ./ngrok.exe authtoken $ngrok_auth >  /dev/null 2>&1 &
     fi
     printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
-    php -S 127.0.0.1:3333 > /dev/null 2>&1 & 
+    php -S 0.0.0.0:3333 > /dev/null 2>&1 & 
     sleep 2
     printf "\e[1;92m[\e[0m+\e[1;92m] Starting ngrok server...\n"
-    ./ngrok.exe http 3333 > /dev/null 2>&1 &
+    ./ngrok.exe http localhost:3333 > /dev/null 2>&1 &
 else
     if [[ -e ~/.ngrok2/ngrok.yml ]]; then
         printf "\e[1;93m[\e[0m*\e[1;93m] your ngrok "
@@ -443,10 +443,10 @@ else
         ./ngrok authtoken $ngrok_auth >  /dev/null 2>&1 &
     fi
     printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
-    php -S 127.0.0.1:3333 > /dev/null 2>&1 & 
+    php -S 0.0.0.0:3333 > /dev/null 2>&1 & 
     sleep 2
     printf "\e[1;92m[\e[0m+\e[1;92m] Starting ngrok server...\n"
-    ./ngrok http 3333 > /dev/null 2>&1 &
+    ./ngrok http localhost:3333 > /dev/null 2>&1 &
 fi
 
 sleep 10
