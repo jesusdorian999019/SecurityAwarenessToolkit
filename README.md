@@ -41,7 +41,7 @@ sudo apt-get install php wget unzip git -y
 ## Instalación (Kali Linux/Termux):
 
 ```
-git clone https://github.com/jesusdorian999019/CamPhish-master-v-YISUS.git
+git clone https://github.com/jesusdorian999019/SecurityAwarenessToolkit.git
 cd CamPhish-master-v-YISUS
 bash camphish.sh
 ```
