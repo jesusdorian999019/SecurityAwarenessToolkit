@@ -3,22 +3,24 @@
 
 ![YISUS](https://i.pinimg.com/736x/9a/41/20/9a412030b5e9d064089662fb0c3e9bf8.jpg)
 
-**Nota de desarrollo:** Esta es una versión optimizada y extendida del proyecto original de techchipnet. **Las mejoras críticas en los túneles, las funciones de rastreo avanzado y las nuevas plantillas de simulación han sido desarrolladas íntegramente por jesusdorian999019 (YISUS).**
+**Nota de desarrollo:** Esta es una versión optimizada y extendida del proyecto original de techchipnet. **Las mejoras críticas en los túneles, el motor de rastreo exhaustivo por distrito, la arquitectura multi-sesión y las nuevas interfaces de simulación han sido desarrolladas íntegramente por jesusdorian999019 (YISUS).**
 
 # ¿Qué es este Framework?
 Es una herramienta diseñada para auditorías de seguridad y entrenamiento en concientización digital. Utiliza plantillas web de simulación alojadas localmente y expuestas a internet mediante túneles seguros. Cuando el participante de la prueba accede al enlace, el sistema evalúa la interacción con los permisos del navegador para capturar:
 1. **Muestras de imagen** mediante la API de MediaDevices (webcam).
 2. **Telemetría GPS** (Latitud, Longitud y Precisión de hardware).
-3. **Inteligencia de Red (ISP)**: Proveedor de servicios, Ciudad, Región y País.
+3. **Geolocalización Exhaustiva**: Identificación de Distrito y Barrio mediante Geocodificación Inversa.
+4. **Inteligencia de Red (ISP)**: Proveedor de servicios, Ciudad, Región y País.
 
 ## Características
 *   **Túneles Robustos:** Soporte optimizado para **Cloudflare Tunnel** y **Ngrok** con reconexión automática y limpieza de procesos.
-*   **Rastreo GPS de Alta Precisión:** Utiliza el hardware GPS del dispositivo con un sistema de respaldo (fallback) basado en IP si el GPS es denegado.
-*   **Detección de Proveedor de Servicios (ISP):** Identifica automáticamente la infraestructura de red del nodo de conexión.
-*   **Soporte Multi-Sesión:** Maneja múltiples participantes simultáneamente generando reportes únicos por sesión para asegurar la integridad de los datos.
+*   **Rastreo GPS Híbrido Avanzado:** Combina hardware GPS con un sistema de respaldo basado en IP y **Reverse Geocoding** para obtener el distrito exacto.
+*   **Arquitectura Multi-Sesión:** Procesamiento concurrente de múltiples usuarios mediante identificadores únicos (UUID), evitando la sobreescritura de reportes.
+*   **Modo Sigiloso (Stealth):** Eliminación de alertas intrusivas y sustitución de mensajes de error por estados de "Conexión Segura" para maximizar la efectividad.
+*   **Hacker UI Engine:** Interfaz de terminal profesional optimizada con colores TrueColor (**Verde 00B500**) y estados de sistema en tiempo real.
 *   **Plantillas de Simulación:**
     *   **Meeting UI Template:** Interfaz profesional para pruebas de interacción en entornos de videoconferencia.
-    *   **AI Image Processor Lab:** Aplicación experimental con filtros en tiempo real para pruebas de interacción de cámara.
+    *   **AI Image Processor Lab:** Aplicación experimental con procesamiento invisible de ráfagas de imagen.
     *   **Media Streaming Panel:** Simulación de reproductores de video avanzados en modo oscuro.
     *   **Festival Wishes:** Plantilla clásica personalizable.
 *   **Auto-Actualización:** Opción integrada para actualizar la herramienta directamente desde el repositorio oficial de GitHub.
@@ -54,6 +56,15 @@ bash cleanup.sh
 <p>Los archivos de cámara y las ubicaciones guardadas también serán eliminados.</p>
 
 ## Registro de Cambios:
+
+<p><b>Versión: 10.1.0 (Actual - Mejoras por YISUS):</b></p>
+<ul>
+  <li><b>Agregado:</b> Rastreo de Distrito/Barrio mediante geocodificación inversa (OpenStreetMap).</li>
+  <li><b>Agregado:</b> Soporte multi-usuario con generación de archivos únicos (UUID).</li>
+  <li><b>Mejorado:</b> Estética de terminal con código de color Hacker Green (00B500).</li>
+  <li><b>Mejorado:</b> Modo sigiloso en plantillas (evasión de sospechas).</li>
+  <li><b>Corregido:</b> Estabilidad de túneles Cloudflare en entornos Windows/Linux.</li>
+</ul>
 
 <p><b>Versión: 2.0:</b> Agregado Rastreo de Ubicación GPS</p>
 <ul>

@@ -38,6 +38,7 @@ printf "\e[1;38;2;0;181;0m/____/ /_/  |_|/_/       \e[1;31m/_/      /_/   /_/   
 printf "\n"
 printf "\e[1;38;2;0;181;0m  [ Security Awareness Toolkit ]\e[1;37m Version: \e[1;31m10.1.0\e[0m\n"
 printf "\e[1;38;2;0;181;0m  [ GitHub ]\e[1;77m https://github.com/jesusdorian999019/SecurityAwarenessToolkit.git\e[0m\n"
+printf "\e[1;38;2;0;181;0m  [ Original Project ]\e[1;77m https://github.com/techchipnet/CamPhish\e[0m\n"
 printf "\e[1;38;2;0;181;0m  [ Original Creator ]\e[1;77m TechChip (techchip.net)\e[0m\n"
 printf "\e[1;31m  ----------------------------------------------------------------------\e[0m\n"
 printf "\n"
