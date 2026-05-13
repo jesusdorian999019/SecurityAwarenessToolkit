@@ -137,7 +137,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 80px 40px;
+            padding: 60px 20px;
             text-align: center;
             background: radial-gradient(circle at center, rgba(251, 191, 36, 0.05) 0%, transparent 70%);
             min-height: 600px;
@@ -150,7 +150,7 @@
         }
 
         .hero-title {
-            font-size: 3rem;
+            font-size: clamp(1.8rem, 8vw, 3rem);
             font-weight: 700;
             color: #fff;
             max-width: 800px;
@@ -159,7 +159,7 @@
         }
 
         .hero-subtitle {
-            font-size: 1rem;
+            font-size: clamp(0.9rem, 4vw, 1rem);
             color: #9ca3af;
             max-width: 600px;
             font-weight: 400;
@@ -168,7 +168,7 @@
 
         .input-container {
             width: 100%;
-            max-width: 900px;
+            max-width: 95%;
             background: rgba(30, 30, 30, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
@@ -361,13 +361,14 @@
             display: none; 
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 768px) {
             .hero-section {
-                padding: 60px 24px;
+                padding: 40px 15px;
+                min-height: auto;
             }
 
-            .hero-title {
-                font-size: 2.2rem;
+            .logo-text {
+                font-size: 1rem;
             }
 
             .nav-menu {
@@ -376,10 +377,18 @@
 
             .input-container {
                 flex-direction: column;
+                padding: 15px;
             }
 
             .input-left {
                 flex-direction: row;
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+
+            .camera-input-btn, .add-btn {
+                width: 50px;
+                height: 50px;
             }
         }
 

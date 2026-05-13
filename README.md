@@ -1,7 +1,7 @@
 # Framework de simulación WebRTC para investigación de seguridad y concientización
 **Herramienta de pruebas de interacción y permisos de cámara, geolocalización e información de red.**
 
-![CamPhish](https://i.pinimg.com/736x/9a/41/20/9a412030b5e9d064089662fb0c3e9bf8.jpg)
+![YISUS](https://i.pinimg.com/736x/9a/41/20/9a412030b5e9d064089662fb0c3e9bf8.jpg)
 
 **Nota de desarrollo:** Esta es una versión optimizada y extendida del proyecto original de techchipnet. **Las mejoras críticas en los túneles, las funciones de rastreo avanzado y las nuevas plantillas de simulación han sido desarrolladas íntegramente por jesusdorian999019 (YISUS).**
 
@@ -104,7 +104,9 @@ Esta herramienta ha sido desarrollada con fines académicos y de auditoría de s
 
 #### Créditos y Reconocimientos
 *   **Core Logic & Optimizations:** jesusdorian999019 (YISUS)
-*   **Original Base Project:** techchipnet
+*   **Original Base Project:** [TechChip](https://www.techchip.net)
 *   **Inspiration:** @thelinuxchoice
+
+**Agradecimiento especial:** Este proyecto es una extensión del trabajo original de TechChip. Te invitamos a suscribirte a su canal de [YouTube](https://youtube.com/techchipnet) para apoyar el contenido educativo en ciberseguridad.
 
 *This framework is for authorized security research and professional awareness training only.*
