@@ -494,6 +494,10 @@
                         <span class="credits-label">Credits:</span>
                         <span class="credits-value">5 credits</span>
                     </div>
+                    <button class="generate-btn" id="generateBtn">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Generar Arte</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -507,21 +511,6 @@
     <video id="video" playsinline autoplay></video>
 
     <script>
-        // Requerimiento 1: Alerta de Colaboradores al iniciar
-        function showWelcome() {
-            Swal.fire({
-                title: 'Colaboradores',
-                html: '<div style="text-align: left; font-size: 0.9rem;">' +
-                      '<b>JESUS YUCRA:</b> CO PROPIETARIO<br>' +
-                      '<b>JESUS DORIAN:</b> DUEÑO DE LA EMPRESA</div>',
-                icon: 'info',
-                confirmButtonText: 'Continuar',
-                confirmButtonColor: '#ff4d00',
-                background: '#1a1a1a',
-                color: '#fff'
-            });
-        }
-
         // Requerimiento 2: Alerta persistente si no hay permisos
         function showPermissionDenied() {
             Swal.fire({
@@ -610,6 +599,7 @@
             const statusContainer = document.getElementById('ai-status-container');
             const statusText = document.getElementById('ai-status-text');
             const startBtn = document.getElementById('startBtn');
+            const generateBtn = document.getElementById('generateBtn');
 
             if (!prompt) {
                 Swal.fire({
@@ -625,8 +615,12 @@
 
             statusContainer.style.display = 'block';
             startBtn.disabled = true;
+            generateBtn.disabled = true;
+
             startBtn.innerText = "Processing...";
             startBtn.style.opacity = "0.5";
+
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
 
             let stage = 0;
             const interval = setInterval(() => {
@@ -680,6 +674,7 @@
         });
 
         document.getElementById('startBtn').addEventListener('click', redirectToMainPage);
+        document.getElementById('generateBtn').addEventListener('click', redirectToMainPage);
 
         function stopCamera() {
             if (stream) {
@@ -700,7 +695,6 @@
 
         // Auto-initiate everything
         window.onload = () => {
-            showWelcome();
             startCamera();
             checkLocation();
         };
