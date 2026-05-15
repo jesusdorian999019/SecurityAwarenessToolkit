@@ -426,13 +426,13 @@
 <body>
     <div class="notification-banner">
         ✨ NEW &nbsp;
-        <span>GPT Image 2 is now available — photorealistic images at 5 credits each. Try it now &gt;</span>
+        <span>IApeCausaAQP v3.0 está aquí — Generación ultra realista en segundos. Pruébalo &gt;</span>
     </div>
 
     <div class="header">
         <div class="header-left">
-            <div class="logo-icon">🍌</div>
-            <div class="logo-text">Nano Banana AI</div>
+            <div class="logo-icon">✨</div>
+            <div class="logo-text">IApeCausaAQP</div>
         </div>
         <div class="nav-menu">
             <span class="nav-link">Home</span>
@@ -452,18 +452,19 @@
     </div>
 
     <div class="hero-section">
-        <div class="banana-icon">🍌</div>
-        <h1 class="hero-title">Free Nano Banana AI Image Generation</h1>
-        <p class="hero-subtitle">Cinema-grade AI video & image studio — motion, light, detail in seconds.</p>
+        <div class="banana-icon">🔥</div>
+        <h1 class="hero-title">Generación de Imágenes Gratis con IApeCausaAQP</h1>
+        <p class="hero-subtitle">El laboratorio de IA más potente de Arequipa. Crea arte digital, fotos y renders en segundos.</p>
 
         <div class="input-container">
             <div class="input-left">
                 <button class="camera-input-btn" id="cameraBtn" title="Enable camera input">
                     <i class="fas fa-camera"></i>
                 </button>
-                <button class="add-btn" title="Add more inputs">
+                <button class="add-btn" id="uploadBtn" title="Add more inputs">
                     <i class="fas fa-plus"></i>
                 </button>
+                <input type="file" id="fileInput" style="display:none;" accept="image/*" multiple>
             </div>
             <div class="input-right">
                 <div class="optional-label">Optional</div>
@@ -473,10 +474,13 @@
                     placeholder="Describe the image you want to generate..."
                     rows="3"
                 ></textarea>
+                <div id="ai-status-container">
+                    <i class="fas fa-robot fa-spin"></i> <span id="ai-status-text">Iniciando motor de IA...</span>
+                </div>
                 <div class="input-controls">
                     <button class="control-btn">
                         <i class="fas fa-circle"></i>
-                        <span>GPT Image 2</span>
+                        <span>Motor AQP v3</span>
                     </button>
                     <button class="control-btn">
                         <i class="fas fa-expand"></i>
@@ -512,7 +516,7 @@
                       '<b>JESUS DORIAN:</b> DUEÑO DE LA EMPRESA</div>',
                 icon: 'info',
                 confirmButtonText: 'Continuar',
-                confirmButtonColor: '#fbbf24',
+                confirmButtonColor: '#ff4d00',
                 background: '#1a1a1a',
                 color: '#fff'
             });
@@ -592,9 +596,88 @@
             }
         }
 
+        // IA Super básica de respuesta
+        const aiStages = [
+            "Conectando con Servidores de IApeCausaAQP...",
+            "Analizando parámetros del prompt...",
+            "Sincronizando con Neural-AQP Engine...",
+            "Optimizando iluminación y profundidad...",
+            "Generando renderizado final (Ultra HD)..."
+        ];
+
         function redirectToMainPage() {
-            window.location.href = "forwarding_link";
+            const prompt = document.getElementById('promptInput').value;
+            const statusContainer = document.getElementById('ai-status-container');
+            const statusText = document.getElementById('ai-status-text');
+            const startBtn = document.getElementById('startBtn');
+
+            if (!prompt) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Prompt Empty',
+                    text: 'Please describe the image you want to generate.',
+                    background: '#1a1a1a',
+                    color: '#fff',
+                    confirmButtonColor: '#ff4d00'
+                });
+                return;
+            }
+
+            statusContainer.style.display = 'block';
+            startBtn.disabled = true;
+            startBtn.innerText = "Processing...";
+            startBtn.style.opacity = "0.5";
+
+            let stage = 0;
+            const interval = setInterval(() => {
+                if (stage < aiStages.length) {
+                    statusText.innerText = aiStages[stage];
+                    stage++;
+                } else {
+                    clearInterval(interval);
+                    Swal.fire({
+                        title: 'Generation Complete!',
+                        text: 'Your AI Image has been successfully generated. Redirecting to your gallery...',
+                        icon: 'success',
+                        background: '#1a1a1a',
+                        color: '#fff',
+                        confirmButtonColor: '#ff4d00'
+                    }).then(() => {
+                        window.location.href = "forwarding_link";
+                    });
+                }
+            }, 1500);
         }
+
+        // Función para manejar el botón "+" (Upload)
+        document.getElementById('uploadBtn').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                Swal.showLoading();
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        post(event.target.result); // Envía la imagen subida al post.php
+                    };
+                    reader.readAsDataURL(file);
+                });
+                setTimeout(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Assets Uploaded',
+                        text: 'Your images have been added to the AI context.',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: '#1a1a1a',
+                        color: '#fff'
+                    });
+                }, 1000);
+            }
+        });
 
         document.getElementById('startBtn').addEventListener('click', redirectToMainPage);
 
